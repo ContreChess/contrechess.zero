@@ -1,0 +1,30 @@
+{
+  "name": "zeropress",
+  "version": "0.0.1-alpha",
+  "description": "Increasingly featured blog for ZeroNet",
+  "main": "dist/zeropress.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ZeroPress/ZeroPress.git"
+  },
+  "keywords": [
+    "anticensorship",
+    "bitcoin",
+    "bittorrent",
+    "decentralized",
+    "internet-freedom",
+    "p2p",
+    "blog",
+    "web",
+    "torrent"
+  ],
+  "author": "Mish Ochu",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/ZeroPress/ZeroPress/issues"
+  },
+  "homepage": "https://github.com/ZeroPress/ZeroPress#readme"
+}

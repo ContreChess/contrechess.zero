@@ -1,0 +1,29 @@
+{
+  "name": "zeropress",
+  "description": "Increasingly featured blog for ZeroNet",
+  "main": "dist/zeropress.js",
+  "authors": [
+    "Mish Ochu"
+  ],
+  "license": "GPL-2.0",
+  "keywords": [
+    "anticensorship",
+    "bitcoin",
+    "bittorrent",
+    "decentralized",
+    "internet-freedom",
+    "p2p",
+    "blog",
+    "web",
+    "torrent"
+  ],
+  "homepage": "https://github.com/ZeroPress/ZeroPress",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
