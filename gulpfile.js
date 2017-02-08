@@ -1,10 +1,11 @@
-var gulp = require('gulp'),
-    sass = require('gulp-sass'),
+var gulp        = require('gulp'),
+    fs          = require('fs'),
+    sass        = require('gulp-sass'),
     browserSync = require('browser-sync').create(),
-    requirejs = require('requirejs'),
-    del = require('del'),
-    gulpIf = require('gulp-if'),
-    imagemin = require('gulp-imagemin'),
+    requirejs   = require('requirejs'),
+    del         = require('del'),
+    gulpIf      = require('gulp-if'),
+    imagemin    = require('gulp-imagemin'),
     runSequence = require('run-sequence');
 
 var config = {
@@ -15,6 +16,14 @@ var config = {
 
 gulp.task('hello', function () {
   console.log('Howdy');
+});
+
+gulp.task('deps', function () {
+  var packageConfig = JSON.parse(fs.readFileSync('./package.json')),
+      packageDependencies = Object.keys(packageConfig.dependencies);
+
+  return gulp.src()
+
 });
 
 gulp.task('sass', function () {
@@ -81,4 +90,5 @@ gulp.task('build', function (callback) {
     ['images', 'fonts'],
     callback)
 });
+
 
