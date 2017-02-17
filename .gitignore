@@ -42,4 +42,4 @@ jspm_packages
 .bower.json
 *.diff
 *.patch
-
+src/js/npm/

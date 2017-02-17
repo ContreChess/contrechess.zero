@@ -18,12 +18,17 @@ gulp.task('hello', function () {
   console.log('Howdy');
 });
 
-gulp.task('deps', function () {
+gulp.task('deps:npm', function () {
   var packageConfig = JSON.parse(fs.readFileSync('./package.json')),
-      packageDependencies = Object.keys(packageConfig.dependencies);
+      packageDependencies = Object.keys(packageConfig.dependencies),
+      packageDependencyGlobs = [];
 
-  return gulp.src()
+  packageDependencies.forEach(function (item, index, collection) {
+    packageDependencyGlobs.push('node_modules/' + item + '/**/*.js');
+  });
 
+  return gulp.src(packageDependencyGlobs)
+    .pipe(gulp.dest('src/js/npm'));
 });
 
 gulp.task('sass', function () {
@@ -32,7 +37,7 @@ gulp.task('sass', function () {
   .pipe(gulp.dest('src/css'))
   .pipe(browserSync.reload({
     stream: true
-  }))
+  }));
 });
 
 gulp.task('watch', ['browserSync'], function () {
