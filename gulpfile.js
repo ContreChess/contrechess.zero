@@ -6,7 +6,8 @@ var gulp        = require('gulp'),
     del         = require('del'),
     gulpIf      = require('gulp-if'),
     imagemin    = require('gulp-imagemin'),
-    runSequence = require('run-sequence');
+    runSequence = require('run-sequence'),
+    jasmine     = require('gulp-jasmine');
 
 var config = {
   baseUrl: 'src/js',
@@ -95,5 +96,10 @@ gulp.task('build', function (callback) {
     ['images', 'fonts'],
     callback)
 });
-
+ 
+gulp.task('test', function () {
+  gulp.src('spec/test.js')
+  // gulp-jasmine works on filepaths so you can't have any plugins before it 
+  .pipe(jasmine())
+});
 
