@@ -1,12 +1,10 @@
-define(function (require) {
   var $         = require('jquery'),
       Backbone  = require('backbone'),
-      self,
+      self;
 
-      game = Backbone.Model.extend({
+  module.exports = Backbone.Model.extend({
       //address: '',
       //
       //userName: '',
       //authAddress: ''
       });
-});
