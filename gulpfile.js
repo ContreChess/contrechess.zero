@@ -11,7 +11,10 @@ var gulp        = require('gulp'),
     watchify    = require('gulp-watchify'),
     uglify      = require('gulp-uglify'),
     cache       = require('gulp-cache'),
+    size       = require('gulp-size'),
     sourceMaps  = require('gulp-sourcemaps'),
+    source      = require('vinyl-sourc-stream'),
+    buffer      = require('vinyl-buffer');
 
 var config = {
   name: 'contre',
@@ -21,6 +24,7 @@ var config = {
     fonts: 'src/fonts/**/*',
     html: 'src/*.html',
     js: 'src/js/**/*.js',
+    app: 'src/js/app.js',
     sass: 'src/scss/**/*.scss'
   },
   staging: {
@@ -80,9 +84,14 @@ gulp.task('css', function () {
 });
 
 gulp.task('javascript', function () {
-  return gulp.src(config.source.js)
+  return browserify(config.source.app)
+  .pipe()
+  .pipe(source(config.name + '.js'))
+  .pipe(buffer())
   .pipe(sourceMaps.init())
+  .pipe(uglify())
   .pipe(sourceMaps.write())
+  .pipe(size())
   .pipe(gulp.dest(config.destination.js));
 });
 
@@ -94,7 +103,7 @@ gulp.task('html', function () {
 gulp.task('watch', ['browserSync'], function () {
   gulp.watch(config.source.sass, ['sass']);
   gulp.watch(config.source.html, browserSync.reload);
-  gulp.watch(config.source.js, browserSync.reload);
+  gulp.watch(config.source.js, ['javascript'], browserSync.reload);
 
   // Other watchers
 });
