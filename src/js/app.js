@@ -1,5 +1,5 @@
-  var Marionette  = require('Backbone.Marionette'),
-      _           = require('underscore');
+  var Marionette  = require('backbone.marionette'),
+      _           = require('underscoret ');
 
   module.exports = Marionette.Application.extend({
     initialize: function () {
