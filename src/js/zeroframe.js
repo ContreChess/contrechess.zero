@@ -29,11 +29,13 @@ module.exports = Marionette.Object.extend({
 
   },
   processors: {
+    ping: function (message) {
+    },
     response: function (message) {
     },
-    wrapperReady: function () {
+    setSiteInfo: function (message) {
     },
-    ping: function (message) {
+    wrapperReady: function () {
     },
     wrapperOpenedWebsocket: function () {
       // TODO: send message via radio

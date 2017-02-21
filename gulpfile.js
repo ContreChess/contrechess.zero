@@ -6,74 +6,63 @@ var gulp        = require('gulp'),
     gulpIf      = require('gulp-if'),
     imagemin    = require('gulp-imagemin'),
     runSequence = require('run-sequence'),
-    jasmine     = require('gulp-jasmine');
+    jasmine     = require('gulp-jasmine'),
+    browserify  = require('browserify'),
+    watchify    = require('gulp-watchify'),
+    uglify      = require('gulp-uglify'),
+    cache       = require('gulp-cache'),
+    sourceMaps  = require('gulp-sourcemaps'),
 
 var config = {
-  baseUrl: 'src/js',
-  name: 'main',
-  out: 'dist/js/zeropress.js'
+  name: 'contre',
+  source: {
+    baseDir: 'src',
+    css: 'src/css/**/*.css',
+    fonts: 'src/fonts/**/*',
+    html: 'src/*.html',
+    js: 'src/js/**/*.js',
+    sass: 'src/scss/**/*.scss'
+  },
+  staging: {
+    css: 'src/css'
+  },
+  tests: {
+    baseDir: 'spec',
+    entry: 'spec/test.js'
+  },
+  destination: {
+    baseDir: 'dist',
+    css: 'dist/css',
+    fonts: 'dist/fonts',
+    images: 'dist/images',
+    js: 'dist/js'
+  }
 };
 
 gulp.task('hello', function () {
   console.log('Howdy');
 });
 
-gulp.task('deps:npm', function () {
-  var packageConfig = JSON.parse(fs.readFileSync('./package.json')),
-      packageDependencies = Object.keys(packageConfig.dependencies),
-      packageDependencyGlobs = [];
+gulp.task('cache:clear', function (callback) {
+  return cache.clearAll(callback);
+});
 
-  packageDependencies.forEach(function (item, index, collection) {
-    packageDependencyGlobs.push('node_modules/' + item + '/**/*.js');
-  });
-
-  return gulp.src(packageDependencyGlobs)
-    .pipe(gulp.dest('src/js/npm'));
+gulp.task('clean:dist', function () {
+  return del.sync(['dist/**/*', '!dist/images', '!dist/images/**/*']);
 });
 
 gulp.task('sass', function () {
-  return gulp.src('src/scss/**/*.scss')
+  return gulp.src(config.source.sass)
   .pipe(sass()) // Using gulp-sass
-  .pipe(gulp.dest('src/css'))
+  .pipe(gulp.dest(config.staging.css))
   .pipe(browserSync.reload({
     stream: true
   }));
 });
 
-gulp.task('watch', ['browserSync'], function () {
-  gulp.watch('src/scss/**/*.scss', ['sass']);
-  gulp.watch('src/*.html', browserSync.reload);
-  gulp.watch('src/js/**/*.js', browserSync.reload);
-
-  // Other watchers
-});
-
-gulp.task('browserSync', function () {
-  browserSync.init({
-    server: {
-      baseDir: 'src'
-    },
-  })
-});
-
-gulp.task('optimize', function () {
-  requirejs.optimize(config, function (buildResponse) {
-  //buildResponse is just a text output of the modules
-  //included. Load the built file for the contents
-  //Use config.out to get the optimezed file contents.
-  var contents = fs.readFileSync(config.out, 'utf8');
-  }, function (err) {
-  //optimization err callback
-  })
-});
-
 gulp.task('fonts', function () {
-  return gulp.src('src/fonts/**/*')
-  .pipe(gulp.dest('dist/fonts'))
-});
-
-gulp.task('clean:dist', function () {
-  return del.sync(['dist/**/*', '!dist/images', '!dist/images/**/*']);
+  return gulp.src(config.source.fonts)
+  .pipe(gulp.dest(config.destination.fonts));
 });
 
 gulp.task('images', function () {
@@ -82,23 +71,52 @@ gulp.task('images', function () {
     .pipe(cache(imagemin({
       interlaced: true
     })))
-  .pipe(gulp.dest('dist/images'))
+  .pipe(gulp.dest(config.destination.images))
 });
 
-gulp.task('cache:clear', function (callback) {
-  return cache.clearAll(callback)
+gulp.task('css', function () {
+  return gulp.src(config.source.css)
+  .pipe(gulp.dest(config.destination.css));
+});
+
+gulp.task('javascript', function () {
+  return gulp.src(config.source.js)
+  .pipe(sourceMaps.init())
+  .pipe(sourceMaps.write())
+  .pipe(gulp.dest(config.destination.js));
+});
+
+gulp.task('html', function () {
+  return gulp.src(config.source.html)
+  .pipe(gulp.dest(config.destination.html));
+});
+
+gulp.task('watch', ['browserSync'], function () {
+  gulp.watch(config.source.sass, ['sass']);
+  gulp.watch(config.source.html, browserSync.reload);
+  gulp.watch(config.source.js, browserSync.reload);
+
+  // Other watchers
+});
+
+gulp.task('browserSync', function () {
+  browserSync.init({
+    server: {
+      baseDir: config.source.baseDir
+    },
+  });
 });
 
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
     'sass',
-    ['images', 'fonts'],
+    ['css', 'images', 'fonts', 'javascript', 'html'],
     callback)
 });
  
 gulp.task('test', function () {
-  gulp.src('spec/test.js')
+  gulp.src(config.tests.baseDir + '/' + config.tests.entry)
   // gulp-jasmine works on filepaths so you can't have any plugins before it 
-  .pipe(jasmine())
+  .pipe(jasmine());
 });
 
