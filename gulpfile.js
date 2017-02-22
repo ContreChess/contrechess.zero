@@ -11,9 +11,12 @@ var gulp        = require('gulp'),
     watchify    = require('gulp-watchify'),
     uglify      = require('gulp-uglify'),
     cache       = require('gulp-cache'),
-    size       = require('gulp-size'),
+    size        = require('gulp-size'),
     sourceMaps  = require('gulp-sourcemaps'),
-    source      = require('vinyl-sourc-stream'),
+    defmod      = require('gulp-define-module'),
+    handlebars  = require('gulp-handlebars'),
+    rename      = require('gulp-rename'),
+    source      = require('vinyl-source-stream'),
     buffer      = require('vinyl-buffer');
 
 var config = {
@@ -22,13 +25,15 @@ var config = {
     baseDir: 'src',
     css: 'src/css/**/*.css',
     fonts: 'src/fonts/**/*',
+    hbs: 'src/js/**/*.hbs',
     html: 'src/*.html',
     js: 'src/js/**/*.js',
-    app: 'src/js/app.js',
+    main: 'src/js/main.js',
     sass: 'src/scss/**/*.scss'
   },
   staging: {
-    css: 'src/css'
+    css: 'src/css',
+    js: 'src/js'
   },
   tests: {
     baseDir: 'spec',
@@ -83,21 +88,35 @@ gulp.task('css', function () {
   .pipe(gulp.dest(config.destination.css));
 });
 
-gulp.task('javascript', function () {
-  return browserify(config.source.app)
-  .pipe()
+gulp.task('javascript', ['handlebars'], function () {
+  console.log(config.destination.js);
+  return browserify(config.source.main)
+  .bundle()
   .pipe(source(config.name + '.js'))
   .pipe(buffer())
+  /*
   .pipe(sourceMaps.init())
   .pipe(uglify())
   .pipe(sourceMaps.write())
   .pipe(size())
+  */
+  .pipe(gulp.dest(config.staging.js))
   .pipe(gulp.dest(config.destination.js));
+});
+
+gulp.task('handlebars', function () {
+  return gulp.src(config.source.hbs)
+  .pipe(handlebars())
+  .pipe(defmod('node'))
+  .pipe(rename({
+    extname: '.hbs.js'
+  }))
+  .pipe(gulp.dest(config.staging.js));
 });
 
 gulp.task('html', function () {
   return gulp.src(config.source.html)
-  .pipe(gulp.dest(config.destination.html));
+  .pipe(gulp.dest(config.destination.baseDir));
 });
 
 gulp.task('watch', ['browserSync'], function () {
@@ -120,6 +139,7 @@ gulp.task('build', function (callback) {
   runSequence('clean:dist',
     'sass',
     ['css', 'images', 'fonts', 'javascript', 'html'],
+    ['cache:clear'],
     callback)
 });
  
@@ -128,4 +148,6 @@ gulp.task('test', function () {
   // gulp-jasmine works on filepaths so you can't have any plugins before it 
   .pipe(jasmine());
 });
+
+
 

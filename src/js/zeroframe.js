@@ -1,10 +1,7 @@
 var Marionette  = require('backbone.marionette'),
-    radio = require('backbone.radio'),
-      Player      = require('./models/player'),
-      View        = require('./views/player_listing'),
-      Router      = require('./router'),
-      uuid        = require('uuid/v4'),
-      callbacks   = {};
+    radio       = require('backbone.radio'),
+    uuid        = require('uuid/v4'),
+    callbacks   = {};
 
 module.exports = Marionette.Object.extend({
   initialize: function (options) {

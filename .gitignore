@@ -42,4 +42,6 @@ jspm_packages
 .bower.json
 *.diff
 *.patch
-src/js/npm/
+dist
+src/js/contre.js
+*.hbs.js

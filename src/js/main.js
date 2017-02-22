@@ -1,16 +1,16 @@
   require('./bootstrap');
 
-  var App = require('./app'),
-      AppLayout = require('./views/app_layout'),
-      PlayerListing = require('./player_listing');
+  var App   = require('./app'),
+      View  = require('./root/views/index'),
+      Root  = require('./root/index');
 
-  var app = new App(),
-      layout = new AppLayout();
+  var app   = new App(),
+      view  = new View();
 
-  app.addSubApp('playerListing', {
-    subAppClass: PlayerListing,
-    container: layout.getRegion('main') // TODO: find a region for this
+  app.addSubApp('root', {
+    subAppClass: Root,
+    container: view.getRegion('main')
   });
 
-  Backbone.history.start();
+  app.start();
 
