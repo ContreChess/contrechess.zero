@@ -44,4 +44,4 @@ jspm_packages
 *.patch
 dist
 src/js/contre.js
-*.hbs.js
+*.chbs.js

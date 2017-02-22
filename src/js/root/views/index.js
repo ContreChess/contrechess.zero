@@ -1,5 +1,5 @@
 var Marionette  = require('backbone.marionette'),
-    template    = require('../templates/index')
+    template    = require('../templates/index.chbs');
 
 module.exports = Marionette.View.extend({
   template: template(),

@@ -109,7 +109,7 @@ gulp.task('handlebars', function () {
   .pipe(handlebars())
   .pipe(defmod('node'))
   .pipe(rename({
-    extname: '.hbs.js'
+    extname: '.chbs.js'
   }))
   .pipe(gulp.dest(config.staging.js));
 });
@@ -148,6 +148,4 @@ gulp.task('test', function () {
   // gulp-jasmine works on filepaths so you can't have any plugins before it 
   .pipe(jasmine());
 });
-
-
 
