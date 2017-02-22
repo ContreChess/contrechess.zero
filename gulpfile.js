@@ -89,7 +89,6 @@ gulp.task('css', function () {
 });
 
 gulp.task('javascript', ['handlebars'], function () {
-  console.log(config.destination.js);
   return browserify(config.source.main)
   .bundle()
   .pipe(source(config.name + '.js'))
@@ -98,8 +97,8 @@ gulp.task('javascript', ['handlebars'], function () {
   .pipe(sourceMaps.init())
   .pipe(uglify())
   .pipe(sourceMaps.write())
-  .pipe(size())
   */
+  .pipe(size())
   .pipe(gulp.dest(config.staging.js))
   .pipe(gulp.dest(config.destination.js));
 });
@@ -120,11 +119,17 @@ gulp.task('html', function () {
 });
 
 gulp.task('watch', ['browserSync'], function () {
+  var bundledJSFile = config.staging.js + '/' + config.name + '.js';
+
+  console.log('watching: ' + bundledJSFile);
   gulp.watch(config.source.sass, ['sass']);
   gulp.watch(config.source.html, browserSync.reload);
-  gulp.watch(config.source.js, ['javascript'], browserSync.reload);
+  // only watch the bundled js file
+  gulp.watch(bundledJSFile, browserSync.reload);
 
   // Other watchers
+  gulp.watch([config.source.js, '!*.chbs.js', '!' + bundledJSFile], ['javascript']);
+  gulp.watch(config.source.hbs, ['javascript']);
 });
 
 gulp.task('browserSync', function () {

@@ -1,20 +1,29 @@
   var Backbone    = require('backbone'),
       Marionette  = require('backbone.marionette'),
-      RootView    = require('./root/views/index'),
       _           = require('underscore');
 
   module.exports = Marionette.Application.extend({
-    addSubApp: function(name, options) {
-      var subAppOptions = _.omit(options, 'subAppClass'),
-          subApp = new options.subAppClass(subAppOptions);
-      this._subApps[name] = subApp;
+    addComponent: function(name, options) {
+      var componentOptions = _.omit(options, 'componentClass'),
+          component = new options.componentClass(componentOptions);
+      this._components[name] = component;
     },
     initialize: function () {
-      this._subApps = {};
+      this._components = {};
     },
-    region: '#main',
+    region: '#app',
     onStart: function () {
-      this.showView(new RootView());
+      var rootComponent =
+        _.find(Object.values(this._components),
+        function (component) {
+          return component.options.isRoot
+        });
+
+      if (!rootComponent) {
+        throw new Error('no root component found');
+      }
+
+      this.showView(rootComponent.getView());
       Backbone.history.start();
     }
   });

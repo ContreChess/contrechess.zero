@@ -4,12 +4,11 @@
       View  = require('./root/views/index'),
       Root  = require('./root/index');
 
-  var app   = new App(),
-      view  = new View();
+  var app   = new App();
 
-  app.addSubApp('root', {
-    subAppClass: Root,
-    container: view.getRegion('main')
+  app.addComponent('root', {
+    componentClass: Root,
+    isRoot: true
   });
 
   app.start();
