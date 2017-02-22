@@ -10,6 +10,7 @@ var gulp        = require('gulp'),
     browserify  = require('browserify'),
     watchify    = require('gulp-watchify'),
     uglify      = require('gulp-uglify'),
+    minify      = require('gulp-minify'),
     cache       = require('gulp-cache'),
     size        = require('gulp-size'),
     sourceMaps  = require('gulp-sourcemaps'),
@@ -93,11 +94,14 @@ gulp.task('javascript', ['handlebars'], function () {
   .bundle()
   .pipe(source(config.name + '.js'))
   .pipe(buffer())
+  
   /*
   .pipe(sourceMaps.init())
   .pipe(uglify())
   .pipe(sourceMaps.write())
   */
+  .pipe(minify({ noSource: true }))
+
   .pipe(size())
   .pipe(gulp.dest(config.staging.js))
   .pipe(gulp.dest(config.destination.js));
