@@ -1,10 +1,12 @@
 var Marionette  = require('backbone.marionette'),
     radio       = require('backbone.radio'),
     uuid        = require('uuid/v4'),
-    callbacks   = {};
+    callbacks   = {},
+    _self;
 
 module.exports = Marionette.Object.extend({
   initialize: function (options) {
+    _self = this;
     addEventListener("message", this.receiveMessage, false);
 
     this.send({
@@ -12,6 +14,12 @@ module.exports = Marionette.Object.extend({
       params: {}
     });
   },
+  certAdd:
+  certSelect:
+  fileDelete:
+  fileList:
+  fileRules:
+  fileWrite:
   send: function (message, callback) {
     if (callback && typeof callback === 'function') {
       message.id = uuid();
@@ -19,6 +27,11 @@ module.exports = Marionette.Object.extend({
     }
     parent.postMessage(message, this.receiveMessage, false);
     
+  },
+  siteInfo:
+  sitePublish: 
+  siteSign: function (privateKey, contentJsonPath, callback) {
+    _self.send(
   },
   receiveMessage: function (event) {
     console.log(event.origin);

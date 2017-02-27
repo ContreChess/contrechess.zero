@@ -1,7 +1,6 @@
   require('./bootstrap');
 
   var App   = require('./app'),
-      View  = require('./root/views/index'),
       Root  = require('./root/index');
 
   var app   = new App();

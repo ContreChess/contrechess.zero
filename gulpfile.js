@@ -37,8 +37,9 @@ var config = {
     js: 'src/js'
   },
   tests: {
-    baseDir: 'spec',
-    entry: 'spec/test.js'
+    specs: 'spec/**/*.js',
+    config: 'spec/support/jasmine.json',
+    entry: 'spec/mainSpec.js'
   },
   destination: {
     baseDir: 'dist',
@@ -47,10 +48,17 @@ var config = {
     images: 'dist/images',
     js: 'dist/js'
   }
-};
+},
+    bundledJSFile = config.staging.js + '/' + config.name + '.js',
+    bundledMiniJSFile = config.staging.js + '/' + config.name + '-min.js';
 
 gulp.task('hello', function () {
   console.log('Howdy');
+});
+
+gulp.task('test', function () {
+  return gulp.src(config.tests.specs)
+  .pipe(jasmine())
 });
 
 gulp.task('cache:clear', function (callback) {
@@ -58,7 +66,7 @@ gulp.task('cache:clear', function (callback) {
 });
 
 gulp.task('clean:dist', function () {
-  return del.sync(['dist/**/*', '!dist/images', '!dist/images/**/*']);
+  return del.sync([bundledJSFile, bundledMiniJSFile, 'src/js/**/*.chbs.js', 'dist/**/*', '!dist/images', '!dist/images/**/*']);
 });
 
 gulp.task('sass', function () {
@@ -100,7 +108,7 @@ gulp.task('javascript', ['handlebars'], function () {
   .pipe(uglify())
   .pipe(sourceMaps.write())
   */
-  .pipe(minify({ noSource: true }))
+  .pipe(minify())
 
   .pipe(size())
   .pipe(gulp.dest(config.staging.js))
@@ -123,7 +131,6 @@ gulp.task('html', function () {
 });
 
 gulp.task('watch', ['browserSync'], function () {
-  var bundledJSFile = config.staging.js + '/' + config.name + '.js';
 
   console.log('watching: ' + bundledJSFile);
   gulp.watch(config.source.sass, ['sass']);
@@ -132,7 +139,7 @@ gulp.task('watch', ['browserSync'], function () {
   gulp.watch(bundledJSFile, browserSync.reload);
 
   // Other watchers
-  gulp.watch([config.source.js, '!*.chbs.js', '!' + bundledJSFile], ['javascript']);
+  gulp.watch([config.source.js, '!*.chbs.js', '!' + bundledJSFile, '!'+bundledMiniJSFile], ['javascript']);
   gulp.watch(config.source.hbs, ['javascript']);
 });
 
