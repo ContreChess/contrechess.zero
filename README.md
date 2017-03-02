@@ -66,13 +66,27 @@ I might also want to use `gulp-cssnano` to do the same thing for css
 13. 
 
 Directories
-- data/
+- site (main)
+  - data/
   |- users/
-  |  |- 2423323532/games.json
-  |  |- 2423323532/rating.json
+  |  |- <address>
+  |  |  |- content.json
+  |  |  |- user.json
+- site (games) 10GB
+  - data/
   |- games
-  |  |- 4354245645455/moves.json
-  |  |- 4354245645455/chat/3432432.json
-  |  |- 4354245645455/publicKeys.json
-  |  |- 4354245645455/redeemScript.json
+  |  |- <multi-sig address>
+  |  |  |- content.json [multi-signers or my instgance writes to these files?]
+  |  |  |- payment.json
+  |  |  |- moves.json (chess.js)
+  |  |  |- chat/
+  |  |  |  | - epochTime.address.json/
 
+- site (solicitations) 200MB need a policy to delete these periodically
+  - data/
+  |  |- <guid> (acceptance deletes offer, creates game, counter deletes offer, creates new offer)
+  |  |  |- offer.json
+            currency
+            amount
+            solicitor
+            solicitee
