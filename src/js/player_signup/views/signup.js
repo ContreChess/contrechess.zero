@@ -14,5 +14,16 @@ module.exports = Marionette.View.extend({
   },
   template: function () {
     return tmpl(_self.model.toJSON());
+  },
+  ui: {
+    name: 'input[type=text][name=name]',
+    publicKey: 'textarea[name=publickey]',
+    createKey: 'button.create.key',
+    bitMessageAddress: 'input[type=text][name=bitmessage-address]',
+    emailAddress: 'input[type=text][name=email]',
+    submit: 'button.submit.button'
+  },
+  triggers: {
+    'click @ui.createKey': 'pgp:create'
   }
 });

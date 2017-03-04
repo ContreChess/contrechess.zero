@@ -8,20 +8,37 @@
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
-            <i class="user icon"></i>
-            <input type="text" name="publickey" placeholder="">
+            <i class="user icon">&nbsp;</i>
+            <label>Name</label><!--Name label might not be needed with an icon-->
+            <input type="text" name="name" placeholder="Name">
+          </div>
+        </div>
+        <div class="field">
+          <label>publickey</label>
+          <textarea name="publickey" rows="4"></textarea>
+          <div class="ui message">
+            <div class="header">PGP Keys</div>
+            <p>Don't have a PGP key yet? We can create one for you.</p>
+            <button class="ui icon button create key">
+              <i class="spy icon">&nbps;</i>
+            </button>
           </div>
         </div>
         <div class="field">
           <div class="ui left icon input">
-            <i class="lock icon"></i>
-            <input type="password" name="password" placeholder="Password">
+            <i class="mail icon">&nbps;</i>
+            <input type="text" name="bitmessage-address" placeholder="BM-*">
           </div>
         </div>
-        <div class="ui fluid large teal submit button">Login</div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="mail icon">&nbps;</i>
+            <input type="text" name="email" placeholder="E-mail address">
+          </div>
+        </div>
+        <button class="ui fluid large teal submit button">Sign up</button>
       </div>
       <div class="ui error message"></div>
     </form>
-    <div class="ui message"> New to us? <a href="#">Sign Up</a> </div>
   </div>
 </div>
