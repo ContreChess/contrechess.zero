@@ -1,21 +1,19 @@
-var Marionette = require('backbone.marionette'),
-    _self;
+var Marionette = require('backbone.marionette');
 
 var component = Marionette.Object.extend({
   initialize: function (options) {
-    this._components = {};
-    
-    _self = this;
+    this.components = {}
   },
-  addComponent: function(name, options) {
+  addComponent: function (name, options) {
     var componentOptions = _.omit(options, 'componentClass'),
         component = new options.componentClass(componentOptions);
 
-    if (component.hasOwnProperty('parentComponent')) {
-      component.parentComponent = this;
+    if (component.setParentComponent) {
+      component.setParentComponent(this);
     }
 
-    this._components[name] = component;
+    this.components[name] = component;
   }
 });
 module.exports =  component;
+

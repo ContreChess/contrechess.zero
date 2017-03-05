@@ -1,10 +1,10 @@
-  var Marionette  = require('backbone.marionette'),
-      View        = require('./views/index'),
-      Router      = require('./router'),
-      Model       = require('./models/display'),
+  var SubComponent  = require('../_base/subcomponent'),
+      View          = require('./views/index'),
+      Router        = require('./router'),
+      Model         = require('./models/display'),
       _self;
 
-  module.exports = Marionette.Object.extend({
+  module.exports = SubComponent.extend({
     initialize: function (options) {
       this.router = new Router({ controller: this });
       this.view = new View({model: new Model()});

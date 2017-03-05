@@ -1,13 +1,15 @@
 var Backbone    = require('backbone'),
     Marionette  = require('backbone.marionette'),
-    Component   = require('./_base/component'),
     _           = require('underscore');
 
 var app = Marionette.Application.extend({
   region: '#app',
+  initialize: function () {
+    this.components = {};
+  },
   onStart: function () {
     var rootComponent =
-      _.find(Object.values(this._components),
+      _.find(Object.values(this.components),
       function (component) {
         return component.options.isRoot;
       });
@@ -18,6 +20,16 @@ var app = Marionette.Application.extend({
 
     this.showView(rootComponent.getView());
     Backbone.history.start();
+  },
+  addComponent: function (name, options) {
+    var componentOptions = _.omit(options, 'componentClass'),
+        component = new options.componentClass(componentOptions);
+
+    if (component.setParentComponent) {
+      component.setParentComponent(this);
+    }
+
+    this.components[name] = component;
   }
-}, Component);
+});
 module.exports = app;

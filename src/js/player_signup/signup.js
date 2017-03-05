@@ -12,7 +12,8 @@ module.exports = SubComponent.extend({
   },
   signup: function () {
     console.log('we called signup');
-    _self.parentComponent.show(this.getView());
+    _self
+      .getParentComponent().showView(this.getView());
   }
 });
 

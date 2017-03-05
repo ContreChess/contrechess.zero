@@ -9,13 +9,11 @@ module.exports = Component.extend({
     }
     _self = this;
   },
-  parentComponent: {
-    get: function () {
+  getParentComponent: function () {
       return _parentComponent;
-    },
-    set: function (value) {
-    _parentComponent = value;
-    }
+  },
+  setParentComponent: function (parentComponent) {
+    _parentComponent = parentComponent;
   },
   getView: function() {
     return this.view;
