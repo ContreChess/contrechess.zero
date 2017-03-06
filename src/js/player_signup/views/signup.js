@@ -1,7 +1,9 @@
-var Marionette          = require('backbone.marionette'),
-    Model               = require('../models/user'),
-    tmpl                = require('../templates/signup.chbs'),
-    _self;
+var Marionette  = require('backbone.marionette'),
+    Radio       = require('backbone.radio'),
+    Model       = require('../models/user'),
+    tmpl        = require('../templates/signup.chbs'),
+    _self,
+    pgpChannel  = Radio.channel('pgp');
 
 module.exports = Marionette.View.extend({
   initialize: function () {
@@ -25,5 +27,10 @@ module.exports = Marionette.View.extend({
   },
   triggers: {
     'click @ui.createKey': 'pgp:create'
-  }
+  },
+  onPgpCreate: function () {
+    // send "loading" signal to button view
+    var options = {};
+    
+        key = pgpChannel.request(options);
 });
