@@ -1,13 +1,17 @@
 var pgp         = require('openpgp'),
     Marionette  = require('backbone.marionette'),
-    Radio       = require('backbone.radio'),
-    pgpChannel  = Radio.channel('pgp');
+    _self;
 
 module.exports = Marionette.Object.extend({
-  initialize: function (options) {
-    pgpChannel.reply('pgp:create', this.pgpCreateKey);
+  channelName: 'pgp',
+  radioRequests: {
+    'key:create': 'createKey'
   },
-  pgpCreateKey: function (options) {
+  initialize: function (options) {
+    _self = this;
+  },
+  createKey: function (options) {
+      console.log('[pgp] enter createKey');
     var pgpOptions = {
       userIds: [
         {
@@ -17,16 +21,14 @@ module.exports = Marionette.Object.extend({
       ], 
       numBits: 4096,                                            // RSA key size
       passphrase: options.passphrase         // protects the private key
-    };
+    },
+      promise = pgp.generateKey(pgpOptions)
 
-    return openpgp
-      .generateKey(pgpOptions)
-      /*.then(function(key) {
-        var privkey = key.privateKeyArmored, // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
-            pubkey = key.publicKeyArmored;   // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-      });*/
-      .then(function(key) {
-        
-      });
+      promise
+        .then(function(key) {
+          _self.getChannel().trigger('create', key);
+        });
+
+    return promise;
   }
 });
