@@ -3,9 +3,28 @@ var Backbone    = require('backbone'),
     _           = require('underscore');
 
 var app = Marionette.Application.extend({
+  channelName: 'app',
+  radioRequests: {
+    'service:get': 'getService'
+  },
   region: '#app',
+  addService: function (options) {
+    var serviceOptions = _.omit(options, 'serviceClass'),
+        service = new options.serviceClass(serviceOptions);
+
+    return this.services[options.name] = service;
+  },
+  getService: function (options) {
+    
+    if (this.services[options.name]) {
+      return this.services[options.name];
+    } else {
+      return this.addService(options);
+    }
+  },
   initialize: function () {
     this.components = {};
+    this.services = {};
   },
   onStart: function () {
     var rootComponent =
