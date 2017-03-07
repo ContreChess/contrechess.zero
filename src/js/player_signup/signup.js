@@ -6,6 +6,7 @@ var SubComponent    = require('../_base/subcomponent'),
     CurrencyManager = require('../utilities/currency'),
     PrivacyManager  = require('../utilities/pgp'),
     appChannel      = Radio.channel('app'),
+    FileSaver       = require('file-saver'),
     currency,
     pgp,
     _self;
@@ -51,7 +52,7 @@ module.exports = SubComponent.extend({
       // TODO: get the user's passphrase
       pgp.createKey({
         name: _self.model.get('userName'),
-        email: _self.model.get('authAddress'),
+        address: _self.model.get('authAddress'),
         passphrase: 'This is one effing salty passphrase'
       })
       .then(function(key) {
@@ -69,11 +70,9 @@ module.exports = SubComponent.extend({
     }
   },
   downloadPrivateKey: function (text) {
-    var file = new File([text], 'private-key.asc', { type: 'text/plain' }),
-        urlHandle = URL.createObjectURL(file),
-        fileWindow = window.open(urlHandle, 'private-pgp-key');
+    var file = new File([text], 'private-key.asc', { type: 'text/plain' });
 
-    URL.revokeObjectURL(urlHandle);
+    FileSaver.saveAs(file);
   }
 });
 

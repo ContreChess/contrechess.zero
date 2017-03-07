@@ -51,5 +51,8 @@ module.exports = Marionette.View.extend({
     var createKeyButton  = this.getUI('createKey');
     createKeyButton.removeClass('disabled');
     createKeyButton.removeAttr('disabled');
+  },
+  onRender: function () {
+    console.log ('[signup view] rendered]');
   }
 });
