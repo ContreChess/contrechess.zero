@@ -1,7 +1,7 @@
 {
-  "name": "zeropress",
-  "description": "Increasingly featured blog for ZeroNet",
-  "main": "dist/zeropress.js",
+  "name": "contrechess",
+  "description": "Play chess for Bitcoin or Litecoin on ZeroNet",
+  "main": "dist/contre.js",
   "authors": [
     "Mish Ochu"
   ],
@@ -13,11 +13,11 @@
     "decentralized",
     "internet-freedom",
     "p2p",
-    "blog",
     "web",
-    "torrent"
+    "torrent",
+    "chess"
   ],
-  "homepage": "https://github.com/ZeroPress/ZeroPress",
+  "homepage": "https://github.com/ContreChess/ContreChess",
   "private": true,
   "ignore": [
     "**/.*",

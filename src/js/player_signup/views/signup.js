@@ -17,6 +17,9 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'success:pgp:create', this.onPgpCreateSuccess);
     this.listenTo(signupChannel, 'fail:pgp:create', this.onPgpCreateFailure);
 
+    this.listenTo(signupChannel, 'success:user:create', this.onUserCreateSuccess);
+    this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
+
   },
   template: function () {
     return tmpl(_self.model.toJSON());
@@ -27,16 +30,22 @@ module.exports = Marionette.View.extend({
     createKey: 'button.create.key',
     bitMessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
-    submit: 'button.submit.button'
+    submit: 'button.submit.button',
+    form: '#signupform'
   },
   triggers: {
-    'click @ui.createKey': 'pgp:create'
+    'click @ui.createKey': 'pgp:create',
+    'submit @ui.form': 'formSubmit'
   },
   onPgpCreate: function () {
     var createKeyButton  = this.getUI('createKey');
     createKeyButton.addClass('disabled');
     createKeyButton.attr('disabled', 'disabled');
     signupChannel.trigger('pgp:create');
+  },
+  formSubmit: function () {
+    signupChannel.trigger('user:create');
+    return false;
   },
   onPgpCreateSuccess: function () {
     console.log('[signup view] pgp create succeeded');
@@ -54,5 +63,9 @@ module.exports = Marionette.View.extend({
   },
   onRender: function () {
     console.log ('[signup view] rendered]');
+  },
+  onUserCreateSuccess: function () {
+  },
+  onUserCreateFailure: function () {
   }
 });

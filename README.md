@@ -1,4 +1,4 @@
-# ZeroPress
+# ContreChess
 
 I might be interested in using `gulp-uglify` for minification.
 
