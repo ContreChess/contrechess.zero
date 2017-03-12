@@ -6,16 +6,20 @@
     </h2>
     <div class="ui hidden right dividing rail">
       <div class="ui cards">
+        <!--TODO: add copy to clipboard -->
         <div class="card">
-          <div class="content"><span>Public</span></div>
+          <div class="content">
+            <div class="header">Public</div>
+            <div class="meta signup public btc key value"></div>
+          </div>
           <div class="ui image medium">
-            <img class="signup public btc key" alt="public btc key" />
+            <img class="signup public btc key qr" alt="public btc key" />
           </div>
         </div>
         <div class="card">
           <div class="content"><span>Private</span></div>
           <div class="ui image medium">
-            <img class="signup private btc key" alt="private btc key wif formatted" />
+            <img class="signup private btc key qr" alt="private btc key wif formatted" />
           </div>
         </div>
 
@@ -61,3 +65,32 @@
     </form>
   </div>
 </div>
+
+<!--
+TODO: add a modal/child view to collect the passphrase
+<div class="ui fullscreen modal transition visible active" style="margin-top: -212.93px; display: block !important;">
+<i class="close icon"></i>
+<div class="header">
+Update Your Settings
+</div>
+<div class="content">
+<div class="ui form">
+<h4 class="ui dividing header">Give us your feedback</h4>
+<div class="field">
+<label>Feedback</label>
+<textarea></textarea>
+</div>
+<div class="field">
+<div class="ui checkbox">
+<input type="checkbox" checked="checked" name="contact-me" tabindex="0" class="hidden">
+<label>It's okay to contact me.</label>
+</div>
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="ui button">Cancel</div>
+<div class="ui green button">Send</div>
+</div>
+</div>
+-->

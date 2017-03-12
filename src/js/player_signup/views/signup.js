@@ -28,8 +28,9 @@ module.exports = Marionette.View.extend({
   },
   ui: {
     rightRail: '.right.dividing.rail',
-    qrPublicBTC: '.signup.public.btc.key',
-    qrPrivateBTC: '.signup.private.btc.key',
+    publicBTC: '.signup.public.btc.key.value',
+    qrPublicBTC: '.signup.public.btc.key.qr',
+    qrPrivateBTC: '.signup.private.btc.key.qr',
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     createKey: 'button.create.key',
@@ -42,6 +43,7 @@ module.exports = Marionette.View.extend({
     'click @ui.createKey': 'pgp:create',
     'submit @ui.form': 'formSubmit',
     'change @ui.name': 'onNameChanged',
+    'input @ui.name': 'onNameChanging',
     'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
     'change @ui.emailAddress': 'onEmailAddressChanged',
     'change @ui.bitMessageAddress': 'onBitMessageAddressChanged'
@@ -82,23 +84,40 @@ module.exports = Marionette.View.extend({
   },
   onUserCreateFailure: function () {
   },
-  onBtcCreateSuccess: function (qrPublic, qrPrivate) {
-    var qrPublicBTC = this.getUI('qrPublicBTC'),
+  onBtcCreateSuccess: function (btcAddress, qrPublic, qrPrivate) {
+    var publicBTC = this.getUI('publicBTC'),
+        qrPublicBTC = this.getUI('qrPublicBTC'),
         qrPrivateBTC = this.getUI('qrPrivateBTC');
 
+    publicBTC.html(btcAddress);
     qrPublicBTC.attr('src', qrPublic.toDataURL());
     qrPrivateBTC.attr('src', qrPrivate.toDataURL());
   },
   onNameChanged: function (event) {
     this.model.set('userName', event.target.value);
   },
+  onNameChanging: function (event) {
+    // TODO: verify that handle isn't taken yet
+  },
   onPgpPublicKeyArmoredChanged: function (event) {
-    this.model.set('pgpPublicKeyArmored', event.target.value);
+    if (_self.model.has('pgpPublicKeyArmored') &&
+        _self.model.get('pgpPublicKeyArmored') === event.target.value) {
+      return false;
+    }
+
+    _self.model.set('pgpPublicKeyArmored', event.target.value);
   },
   onEmailAddressChanged: function (event) {
-    this.model.setEmailAddress(event.target.value);
+    // TODO: validate email address
+    if (signupChannel.request('validate:email', event.target.value)) {
+      signupChannel.trigger('change:email', event.target.value);
+    } else {
+    }
   },
   onBitMessageAddressChanged: function (event) {
-    this.model.setBitMessageAddress(event.target.value);
-  }
+    // TODO: validate bitmessage address
+    if (signupChannel.request('validate:bitMessageAddress', event.target.value)) {
+      signupChannel.trigger('change:bitMessageAddress', event.target.value);
+    } else {
+    }  }
 });

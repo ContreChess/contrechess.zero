@@ -6,12 +6,16 @@ var SubComponent    = require('../_base/subcomponent'),
     CurrencyManager = require('../utilities/currency'),
     PrivacyManager  = require('../utilities/pgp'),
     ZeroNetManager  = require('../utilities/zeronet'),
+    InigoMontoya    = require('../inigo'),
     appChannel      = Radio.channel('app'),
     FileSaver       = require('file-saver'),
     QR              = require('qrious'),
     currency,
     pgp,
     zeronet,
+    inigo,
+    _clearTextEmail,
+    _clearTextBitMessageAddress,
     _self;
 
 module.exports = SubComponent.extend({
@@ -41,6 +45,10 @@ module.exports = SubComponent.extend({
       zeronet = appChannel.request('service:get', { name: 'zeronet', serviceClass: ZeroNetManager });
     }
 
+    if (options && options.inigo) {
+    } else {
+      inigo = appChannel.request('service:get', { name: 'inigo', serviceClass: InigoMontoya });
+    }
   },
   radioEvents: {
     'pgp:create': 'pgpCreateKey',
@@ -58,8 +66,8 @@ module.exports = SubComponent.extend({
         _self.btcAddress = key;
         _self.model.set('btcAddress', key.getAddress());
         var qrPublic = new QR({ value: 'bitcoin:' + key.getAddress() }),
-            qrPrivate = new QR({ value: 'bitcoin:' + key.toWIF() });
-        _self.getChannel().trigger('success:btc:create', qrPublic, qrPrivate);
+            qrPrivate = new QR({ value: key.toWIF() });
+        _self.getChannel().trigger('success:btc:create', key.getAddress(), qrPublic, qrPrivate);
       });
 
   },
@@ -120,3 +128,34 @@ module.exports = SubComponent.extend({
   }
 });
 
+/*
+ *setBitMessageAddress: function (address) {
+    // when coming from the view, 'address' has a value
+    // when coming from an update to 'pgpPublicKeyArmored', address will be undefined
+    // but _clearTextBitMessageAddress should have a value
+    _clearTextBitMessageAddress = address || _clearTextBitMessageAddress;
+
+    if (_clearTextBitMessageAddress) {
+      if (pgp && _self.has('pgpPublicKeyArmored')) {
+        var options = {
+          data:,
+          publicKeys: [pgp.readArmored(inigo.getPublickKey()).keys, pgp.readArmored(_self.get('pgpPublicKeyArmored')).keys],
+          privateKeys: []
+        };
+        
+      } else {
+        _self.listenToOnce(_self, 'change:pgpPublicKeyArmored', _self.setBitMessageAddress);
+      }
+    }
+  },
+  setEmailAddress: function (address) {
+    _clearTextEmail = address || _clearTextEmail;
+
+    if (_clearTextEmail) {
+      if (pgp && _self.has('pgpPublicKeyArmored')) {
+      } else {
+        _self.listenToOnce(_self, 'change:pgpPublicKeyArmored', _self.setEmailAddress);
+      }
+    }
+  }
+*/
