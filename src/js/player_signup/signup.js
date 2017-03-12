@@ -8,6 +8,7 @@ var SubComponent    = require('../_base/subcomponent'),
     ZeroNetManager  = require('../utilities/zeronet'),
     appChannel      = Radio.channel('app'),
     FileSaver       = require('file-saver'),
+    QR              = require('qrious'),
     currency,
     pgp,
     zeronet,
@@ -32,6 +33,7 @@ module.exports = SubComponent.extend({
       pgp = options.pgpManager;
     } else {
       pgp = appChannel.request('service:get', { name: 'pgp', serviceClass: PrivacyManager });
+    }
 
     if (options && options.zeroNetManager) {
       zeronet = options.zeroNetManager;
@@ -39,13 +41,6 @@ module.exports = SubComponent.extend({
       zeronet = appChannel.request('service:get', { name: 'zeronet', serviceClass: ZeroNetManager });
     }
 
-      currency
-        .btcCreateKey()
-        .then(function (key) {
-          _self.userKey = key;
-          _self.model.set('authAddress', key.getAddress());
-        });
-         }
   },
   radioEvents: {
     'pgp:create': 'pgpCreateKey',
@@ -53,21 +48,33 @@ module.exports = SubComponent.extend({
   },
   signup: function () {
     console.log('we called signup');
+
     _self
       .getParentComponent().showView(_self.getView());
+
+    currency
+      .btcCreateKey()
+      .then(function (key) {
+        _self.btcAddress = key;
+        _self.model.set('btcAddress', key.getAddress());
+        var qrPublic = new QR({ value: 'bitcoin:' + key.getAddress() }),
+            qrPrivate = new QR({ value: 'bitcoin:' + key.toWIF() });
+        _self.getChannel().trigger('success:btc:create', qrPublic, qrPrivate);
+      });
+
   },
   pgpCreateKey: function () {
-    if (_self.userKey) {
+    if (_self.btcAddress) {
       // TODO: get the user's passphrase
       pgp.createKey({
         name: _self.model.get('userName'),
-        address: _self.model.get('authAddress'),
+        address: _self.model.get('btcAddress'),
         passphrase: 'This is one effing salty passphrase'
       })
       .then(function(key) {
         console.log('[signup controller] pgp.createKey succeeded');
         _self.pgpKey = key;
-        _self.model.set('pgpPublicKey', key.publicKeyArmored);
+        _self.model.set('pgpPublicKeyArmored', key.publicKeyArmored);
         _self.downloadPrivateKey(key.privateKeyArmored);
         _self.getChannel().trigger('success:pgp:create');
       }, function (error){
@@ -87,21 +94,24 @@ module.exports = SubComponent.extend({
   createUser: function (options) {
     // TODO:
     // 1. validate that pgp public key is valid
-    // readArmored
+    if (!pgp.isValidArmoredKey(_self.model.get('pgpPublicKeyArmored'))) {
+      _self.getChannel().trigger('fail:user:create', 'pgp public key is not valid');
+      return;
+    }
+    
     zeronet
       .getSiteInfo()
       .then(function (siteInfo) {
         // 2. sign site address plus user address in base64
         //    using user address private key
-        var textToSign = siteInfo.address + '#' + _self.model.get('authAddress');
-
-        cert = _self.userKey.sign(textToSign.toString('base64'));
+        var textToSign = siteInfo.address + '#' + _self.model.get('btcAddress'),
+            cert = _self.btcAddress.sign(textToSign.toString('base64'));
 
         return zeronet.addCertificate({ cert: cert });
       })
       .then(function (response) {
         // 3. write the model to the file system
-        var filePath = 'data/users/' + _self.model.get('authAddress') + '/user.json';
+        var filePath = 'data/users/' + _self.model.get('btcAddress') + '/user.json';
         return zeronet.writeFile(filePath, _self.model.toJSON().toString('base64'));
       })
       .then(function (response) {

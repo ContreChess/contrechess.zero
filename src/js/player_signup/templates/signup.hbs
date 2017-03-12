@@ -4,9 +4,26 @@
       <img src="images/game.svg" class="image" style="width: 60px; height: 60px" alt="logo">
       <div class="content">Create account</div>
     </h2>
+    <div class="ui hidden right dividing rail">
+      <div class="ui cards">
+        <div class="card">
+          <div class="content"><span>Public</span></div>
+          <div class="ui image medium">
+            <img class="signup public btc key" alt="public btc key" />
+          </div>
+        </div>
+        <div class="card">
+          <div class="content"><span>Private</span></div>
+          <div class="ui image medium">
+            <img class="signup private btc key" alt="private btc key wif formatted" />
+          </div>
+        </div>
+
+      </div>
+    </div>
     <form id="signupform" class="ui large form">
-      <input type="hidden" name="auth" />
       <div class="ui stacked segment">
+        <input type="hidden" name="auth" />
         <div class="field">
           <div class="ui left icon input">
             <i class="user icon">&nbsp;</i>
@@ -16,7 +33,7 @@
         </div>
         <div class="field">
           <label>publickey</label>
-          <textarea name="publickey" rows="4"></textarea>
+          <textarea name="pgppublickeyarmored" rows="4"></textarea>
           <div class="ui message">
             <div class="header">PGP Keys</div>
             <p>Don't have a PGP key yet? We can create one for you.</p>

@@ -20,13 +20,18 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'success:user:create', this.onUserCreateSuccess);
     this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
 
+    this.listenTo(signupChannel, 'success:btc:create', this.onBtcCreateSuccess);
+
   },
   template: function () {
     return tmpl(_self.model.toJSON());
   },
   ui: {
+    rightRail: '.right.dividing.rail',
+    qrPublicBTC: '.signup.public.btc.key',
+    qrPrivateBTC: '.signup.private.btc.key',
     name: 'input[type=text][name=name]',
-    publicKey: 'textarea[name=publickey]',
+    pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     createKey: 'button.create.key',
     bitMessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
@@ -35,7 +40,16 @@ module.exports = Marionette.View.extend({
   },
   triggers: {
     'click @ui.createKey': 'pgp:create',
-    'submit @ui.form': 'formSubmit'
+    'submit @ui.form': 'formSubmit',
+    'change @ui.name': 'onNameChanged',
+    'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
+    'change @ui.emailAddress': 'onEmailAddressChanged',
+    'change @ui.bitMessageAddress': 'onBitMessageAddressChanged'
+  },
+  modelEvents: {
+    'change:pgpPublicKeyArmored': function (model, value) {
+      this.getUI('pgpPublicKeyArmored').val(value);
+    },
   },
   onPgpCreate: function () {
     var createKeyButton  = this.getUI('createKey');
@@ -67,5 +81,24 @@ module.exports = Marionette.View.extend({
   onUserCreateSuccess: function () {
   },
   onUserCreateFailure: function () {
+  },
+  onBtcCreateSuccess: function (qrPublic, qrPrivate) {
+    var qrPublicBTC = this.getUI('qrPublicBTC'),
+        qrPrivateBTC = this.getUI('qrPrivateBTC');
+
+    qrPublicBTC.attr('src', qrPublic.toDataURL());
+    qrPrivateBTC.attr('src', qrPrivate.toDataURL());
+  },
+  onNameChanged: function (event) {
+    this.model.set('userName', event.target.value);
+  },
+  onPgpPublicKeyArmoredChanged: function (event) {
+    this.model.set('pgpPublicKeyArmored', event.target.value);
+  },
+  onEmailAddressChanged: function (event) {
+    this.model.setEmailAddress(event.target.value);
+  },
+  onBitMessageAddressChanged: function (event) {
+    this.model.setBitMessageAddress(event.target.value);
   }
 });
