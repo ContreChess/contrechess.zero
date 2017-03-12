@@ -6,6 +6,7 @@ var $               = require('jquery'),
     _clearTextEmail,
     _clearTextBitMessageAddress,
     pgp,
+    pgpPublicKeyArmored,
     _self;
 
 module.exports = Backbone.Model.extend({
@@ -32,7 +33,8 @@ module.exports = Backbone.Model.extend({
     _clearTextBitMessageAddress = address || _clearTextBitMessageAddress;
 
     if (_clearTextBitMessageAddress) {
-      if (pgp) {
+      if (pgp && _self.has('pgpPublicKeyArmored')) {
+        
       } else {
         _self.listenToOnce(_self, 'change:pgpPublicKeyArmored', _self.setBitMessageAddress);
       }
