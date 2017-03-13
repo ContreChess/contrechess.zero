@@ -1,14 +1,20 @@
-var $     = require('jquery'),
-Backbone  = require('backbone'),
-_self;
+var $               = require('jquery'),
+    Backbone        = require('backbone'),
+    Radio           = require('backbone.radio'),
+    appChannel      = Radio.channel('app'),
+    pgp,
+    _self;
 
 module.exports = Backbone.Model.extend({
   defaults: {
   userName: null,
-  pgpPublicKey: null,
-  authAddress: null,
+  pgpPublicKeyArmored: null,
+  btcAddress: null,
   bitMessageAddress: null,
   emailAddress: null
+  },
+  initialize: function (options) {
+    _self = this;
   }
 });
 

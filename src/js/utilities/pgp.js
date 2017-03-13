@@ -30,5 +30,18 @@ module.exports = Marionette.Object.extend({
         });
 
     return promise;
+  },
+  readArmored: function (text) {
+    return pgp.key.readArmored(text);
+  },
+  isValidArmoredKey: function (text) {
+    var result;
+    try {
+      result = _self.readArmored(text);
+    } catch (e) {
+      return false
+    }
+    
+    return result.err === undefined || result.err.length == 0;
   }
 });

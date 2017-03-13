@@ -17,26 +17,55 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'success:pgp:create', this.onPgpCreateSuccess);
     this.listenTo(signupChannel, 'fail:pgp:create', this.onPgpCreateFailure);
 
+    this.listenTo(signupChannel, 'success:user:create', this.onUserCreateSuccess);
+    this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
+
+    this.listenTo(signupChannel, 'success:btc:create', this.onBtcCreateSuccess);
+
   },
   template: function () {
     return tmpl(_self.model.toJSON());
   },
   ui: {
+    rightRail: '.right.dividing.rail',
+    publicBTC: '.signup.public.btc.key.value',
+    qrPublicBTC: '.signup.public.btc.key.qr',
+    qrPrivateBTC: '.signup.private.btc.key.qr',
     name: 'input[type=text][name=name]',
-    publicKey: 'textarea[name=publickey]',
+    pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
+    passphrase: 'input[type=text][name=passphrase]',
     createKey: 'button.create.key',
     bitMessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
-    submit: 'button.submit.button'
+    submit: 'button.submit.button',
+    form: '#signupform'
   },
   triggers: {
-    'click @ui.createKey': 'pgp:create'
+    'click @ui.createKey': 'pgp:create',
+    'submit @ui.form': 'formSubmit',
+    'change @ui.name': 'onNameChanged',
+    'input @ui.name': 'onNameChanging',
+    'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
+    'change @ui.emailAddress': 'onEmailAddressChanged',
+    'change @ui.bitMessageAddress': 'onBitMessageAddressChanged'
+  },
+  modelEvents: {
+    'change:pgpPublicKeyArmored': function (model, value) {
+      this.getUI('pgpPublicKeyArmored').val(value);
+    },
   },
   onPgpCreate: function () {
-    var createKeyButton  = this.getUI('createKey');
+    var createKeyButton  = this.getUI('createKey'),
+        passPhrase = this.getUI('passphrase');
+    // TODO: validate passphrase
     createKeyButton.addClass('disabled');
     createKeyButton.attr('disabled', 'disabled');
-    signupChannel.trigger('pgp:create');
+    // TODO: change to loading button
+    signupChannel.trigger('pgp:create', passphrase.val());
+  },
+  formSubmit: function () {
+    signupChannel.trigger('user:create');
+    return false;
   },
   onPgpCreateSuccess: function () {
     console.log('[signup view] pgp create succeeded');
@@ -54,5 +83,45 @@ module.exports = Marionette.View.extend({
   },
   onRender: function () {
     console.log ('[signup view] rendered]');
-  }
+  },
+  onUserCreateSuccess: function () {
+  },
+  onUserCreateFailure: function () {
+  },
+  onBtcCreateSuccess: function (btcAddress, qrPublic, qrPrivate) {
+    var publicBTC = this.getUI('publicBTC'),
+        qrPublicBTC = this.getUI('qrPublicBTC'),
+        qrPrivateBTC = this.getUI('qrPrivateBTC');
+
+    publicBTC.html(btcAddress);
+    qrPublicBTC.attr('src', qrPublic.toDataURL());
+    qrPrivateBTC.attr('src', qrPrivate.toDataURL());
+  },
+  onNameChanged: function (event) {
+    this.model.set('userName', event.target.value);
+  },
+  onNameChanging: function (event) {
+    // TODO: verify that handle isn't taken yet
+  },
+  onPgpPublicKeyArmoredChanged: function (event) {
+    if (_self.model.has('pgpPublicKeyArmored') &&
+        _self.model.get('pgpPublicKeyArmored') === event.target.value) {
+      return false;
+    }
+
+    _self.model.set('pgpPublicKeyArmored', event.target.value);
+  },
+  onEmailAddressChanged: function (event) {
+    // TODO: validate email address
+    if (signupChannel.request('validate:email', event.target.value)) {
+      signupChannel.trigger('set:email', event.target.value);
+    } else {
+    }
+  },
+  onBitMessageAddressChanged: function (event) {
+    // TODO: validate bitmessage address
+    if (signupChannel.request('validate:bitMessageAddress', event.target.value)) {
+      _self.model.set('bitMessageAddress', event.target.value);
+    } else {
+    }  }
 });

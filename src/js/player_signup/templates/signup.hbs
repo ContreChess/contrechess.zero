@@ -4,8 +4,27 @@
       <img src="images/game.svg" class="image" style="width: 60px; height: 60px" alt="logo">
       <div class="content">Create account</div>
     </h2>
-    <form class="ui large form">
-      <input type="hidden" name="auth" />
+    <div class="ui hidden right dividing rail">
+      <div class="ui cards">
+        <!--TODO: add copy to clipboard -->
+        <div class="card">
+          <div class="content">
+            <div class="header">Public</div>
+            <div class="meta signup public btc key value"></div>
+          </div>
+          <div class="ui image medium">
+            <img class="signup public btc key qr" alt="public btc key" />
+          </div>
+        </div>
+        <div class="card">
+          <div class="content"><span>Private</span></div>
+          <div class="ui image medium">
+            <img class="signup private btc key qr" alt="private btc key wif formatted" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <form id="signupform" class="ui large form">
       <div class="ui stacked segment">
         <div class="field">
           <div class="ui left icon input">
@@ -16,10 +35,16 @@
         </div>
         <div class="field">
           <label>publickey</label>
-          <textarea name="publickey" rows="4"></textarea>
-          <div class="ui message">
-            <div class="header">PGP Keys</div>
-            <p>Don't have a PGP key yet? We can create one for you.</p>
+          <textarea name="pgppublickeyarmored" rows="4"></textarea>
+        </div>
+        <div class="ui message">
+          <div class="header">PGP Keys</div>
+          <p>Don't have a PGP key yet? We can <a class="show pgp generation" href="#">create</a> one for you.</p>
+          <div class="hidden pgp generation inputs">
+            <div class="field">
+              <i class="comments icon">&nbsp;</i>
+              <input class="ui left icon input" type="text" name="passphrase" placeholder="pass phrase" />
+            </div>
             <button class="ui labeled icon button create key">
               <i class="spy icon">&nbsp;</i>
               Create Key
@@ -44,3 +69,4 @@
     </form>
   </div>
 </div>
+
