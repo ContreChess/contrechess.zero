@@ -22,12 +22,10 @@
             <img class="signup private btc key qr" alt="private btc key wif formatted" />
           </div>
         </div>
-
       </div>
     </div>
     <form id="signupform" class="ui large form">
       <div class="ui stacked segment">
-        <input type="hidden" name="auth" />
         <div class="field">
           <div class="ui left icon input">
             <i class="user icon">&nbsp;</i>
@@ -38,9 +36,15 @@
         <div class="field">
           <label>publickey</label>
           <textarea name="pgppublickeyarmored" rows="4"></textarea>
-          <div class="ui message">
-            <div class="header">PGP Keys</div>
-            <p>Don't have a PGP key yet? We can create one for you.</p>
+        </div>
+        <div class="ui message">
+          <div class="header">PGP Keys</div>
+          <p>Don't have a PGP key yet? We can <a class="show pgp generation" href="#">create</a> one for you.</p>
+          <div class="hidden pgp generation inputs">
+            <div class="field">
+              <i class="comments icon">&nbsp;</i>
+              <input class="ui left icon input" type="text" name="passphrase" placeholder="pass phrase" />
+            </div>
             <button class="ui labeled icon button create key">
               <i class="spy icon">&nbsp;</i>
               Create Key
@@ -66,31 +70,3 @@
   </div>
 </div>
 
-<!--
-TODO: add a modal/child view to collect the passphrase
-<div class="ui fullscreen modal transition visible active" style="margin-top: -212.93px; display: block !important;">
-<i class="close icon"></i>
-<div class="header">
-Update Your Settings
-</div>
-<div class="content">
-<div class="ui form">
-<h4 class="ui dividing header">Give us your feedback</h4>
-<div class="field">
-<label>Feedback</label>
-<textarea></textarea>
-</div>
-<div class="field">
-<div class="ui checkbox">
-<input type="checkbox" checked="checked" name="contact-me" tabindex="0" class="hidden">
-<label>It's okay to contact me.</label>
-</div>
-</div>
-</div>
-</div>
-<div class="actions">
-<div class="ui button">Cancel</div>
-<div class="ui green button">Send</div>
-</div>
-</div>
--->

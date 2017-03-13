@@ -15,7 +15,6 @@ var SubComponent    = require('../_base/subcomponent'),
     zeronet,
     inigo,
     _clearTextEmail,
-    _clearTextBitMessageAddress,
     _self;
 
 module.exports = SubComponent.extend({
@@ -52,10 +51,12 @@ module.exports = SubComponent.extend({
   },
   radioEvents: {
     'pgp:create': 'pgpCreateKey',
-    'user:create': 'createUser'
+    'user:create': 'createUser',
+    'set:email': 'setEmail',
   },
   signup: function () {
-    console.log('we called signup');
+    // TODO: use sed or gulp to insert file path to console.log for all js files
+    console.log('[src/js/player_signup/signup] we called signup');
 
     _self
       .getParentComponent().showView(_self.getView());
@@ -71,13 +72,13 @@ module.exports = SubComponent.extend({
       });
 
   },
-  pgpCreateKey: function () {
+  pgpCreateKey: function (passPhrase) {
     if (_self.btcAddress) {
       // TODO: get the user's passphrase
       pgp.createKey({
         name: _self.model.get('userName'),
         address: _self.model.get('btcAddress'),
-        passphrase: 'This is one effing salty passphrase'
+        passphrase: passPhrase
       })
       .then(function(key) {
         console.log('[signup controller] pgp.createKey succeeded');
@@ -93,7 +94,6 @@ module.exports = SubComponent.extend({
       // TODO: wait for currency module to gen a key before requesting a pgp key
     }
   },
-
   downloadPrivateKey: function (text) {
     var file = new File([text], 'private-key.asc', { type: 'text/plain' });
 
@@ -107,55 +107,52 @@ module.exports = SubComponent.extend({
       return;
     }
     
+    var filePath = 'data/users/' + _self.model.get('btcAddress') + '/user.json';
+
     zeronet
       .getSiteInfo()
       .then(function (siteInfo) {
         // 2. sign site address plus user address in base64
         //    using user address private key
-        var textToSign = siteInfo.address + '#' + _self.model.get('btcAddress'),
+        var textToSign = siteInfo.auth_address + '#web/' + _self.model.get('btcAddress'),
             cert = _self.btcAddress.sign(textToSign.toString('base64'));
 
-        return zeronet.addCertificate({ cert: cert });
+        return zeronet.addCertificate(cert);
       })
       .then(function (response) {
         // 3. write the model to the file system
-        var filePath = 'data/users/' + _self.model.get('btcAddress') + '/user.json';
         return zeronet.writeFile(filePath, _self.model.toJSON().toString('base64'));
+      })
+      .then(function (response) {
+        return zeronet.publish(filePath);
       })
       .then(function (response) {
         // 4. handle errors or process notifications
       });
-  }
-});
-
-/*
- *setBitMessageAddress: function (address) {
+  },
+  setEmail: function (address) {
     // when coming from the view, 'address' has a value
     // when coming from an update to 'pgpPublicKeyArmored', address will be undefined
-    // but _clearTextBitMessageAddress should have a value
-    _clearTextBitMessageAddress = address || _clearTextBitMessageAddress;
-
-    if (_clearTextBitMessageAddress) {
-      if (pgp && _self.has('pgpPublicKeyArmored')) {
-        var options = {
-          data:,
-          publicKeys: [pgp.readArmored(inigo.getPublickKey()).keys, pgp.readArmored(_self.get('pgpPublicKeyArmored')).keys],
-          privateKeys: []
-        };
-        
-      } else {
-        _self.listenToOnce(_self, 'change:pgpPublicKeyArmored', _self.setBitMessageAddress);
-      }
-    }
-  },
-  setEmailAddress: function (address) {
+    // but _clearTextEmail should have a value
     _clearTextEmail = address || _clearTextEmail;
 
     if (_clearTextEmail) {
-      if (pgp && _self.has('pgpPublicKeyArmored')) {
+      if (pgp && _self.model.has('pgpPublicKeyArmored')) {
+        var options = {
+          data: _clearTextEmail,
+          publicKeys: [pgp.readArmored(inigo.getPublickKey()).keys, pgp.readArmored(_self.model.get('pgpPublicKeyArmored')).keys]
+        };
+
+        pgp
+          .encrypt(options)
+          .then(function (cyphertext) {
+            _self.model.set('emailAddress');
+          });
+        
       } else {
-        _self.listenToOnce(_self, 'change:pgpPublicKeyArmored', _self.setEmailAddress);
+        _self.listenToOnce(_self.model, 'change:pgpPublicKeyArmored', _self.setEmail);
       }
     }
-  }
-*/
+  },
+});
+ 

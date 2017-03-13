@@ -33,6 +33,7 @@ module.exports = Marionette.View.extend({
     qrPrivateBTC: '.signup.private.btc.key.qr',
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
+    passphrase: 'input[type=text][name=passphrase]',
     createKey: 'button.create.key',
     bitMessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
@@ -54,10 +55,13 @@ module.exports = Marionette.View.extend({
     },
   },
   onPgpCreate: function () {
-    var createKeyButton  = this.getUI('createKey');
+    var createKeyButton  = this.getUI('createKey'),
+        passPhrase = this.getUI('passphrase');
+    // TODO: validate passphrase
     createKeyButton.addClass('disabled');
     createKeyButton.attr('disabled', 'disabled');
-    signupChannel.trigger('pgp:create');
+    // TODO: change to loading button
+    signupChannel.trigger('pgp:create', passphrase.val());
   },
   formSubmit: function () {
     signupChannel.trigger('user:create');
@@ -110,14 +114,14 @@ module.exports = Marionette.View.extend({
   onEmailAddressChanged: function (event) {
     // TODO: validate email address
     if (signupChannel.request('validate:email', event.target.value)) {
-      signupChannel.trigger('change:email', event.target.value);
+      signupChannel.trigger('set:email', event.target.value);
     } else {
     }
   },
   onBitMessageAddressChanged: function (event) {
     // TODO: validate bitmessage address
     if (signupChannel.request('validate:bitMessageAddress', event.target.value)) {
-      signupChannel.trigger('change:bitMessageAddress', event.target.value);
+      _self.model.set('bitMessageAddress', event.target.value);
     } else {
     }  }
 });

@@ -63,7 +63,7 @@ module.exports = Marionette.Object.extend({
       '0sqS6g==',
       '=LJZ9',
       '-----END PGP PUBLIC KEY BLOCK-----'].join('\n');
-      console.log('My name is Inigo Montoya, you killed my father, prepare to die.');
+      console.log('[inigo] My name is Inigo Montoya, you killed my father, prepare to die.');
   },
   getPublickKey: function () {
     return _self.pubKey;
