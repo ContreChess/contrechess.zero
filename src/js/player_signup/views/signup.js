@@ -30,7 +30,9 @@ module.exports = Marionette.View.extend({
     rightRail: '.right.dividing.rail',
     publicBTC: '.signup.public.btc.key.value',
     qrPublicBTC: '.signup.public.btc.key.qr',
+    copyPublicBTC: 'button.copy.public.btc.key',
     qrPrivateBTC: '.signup.private.btc.key.qr',
+    copyPrivateBTC: 'button.copy.private.btc.key',
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     passphrase: 'input[type=text][name=passphrase]',
@@ -47,7 +49,9 @@ module.exports = Marionette.View.extend({
     'input @ui.name': 'onNameChanging',
     'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
     'change @ui.emailAddress': 'onEmailAddressChanged',
-    'change @ui.bitMessageAddress': 'onBitMessageAddressChanged'
+    'change @ui.bitMessageAddress': 'onBitMessageAddressChanged',
+    'click @ui.copyPublicBTC': 'copy:btc:public',
+    'click @ui.copyPrivateBTC': 'copy:btc:private'
   },
   modelEvents: {
     'change:pgpPublicKeyArmored': function (model, value) {
@@ -61,7 +65,7 @@ module.exports = Marionette.View.extend({
     createKeyButton.addClass('disabled');
     createKeyButton.attr('disabled', 'disabled');
     // TODO: change to loading button
-    signupChannel.trigger('pgp:create', passphrase.val());
+    signupChannel.trigger('pgp:create', passPhrase.val());
   },
   formSubmit: function () {
     signupChannel.trigger('user:create');
@@ -70,16 +74,23 @@ module.exports = Marionette.View.extend({
   onPgpCreateSuccess: function () {
     console.log('[signup view] pgp create succeeded');
     this.enableCreateKeyButton();
+    this.clearPassPhrase();
   },
   onPgpCreateFailure: function () {
     console.error('[signup view] pgp create failed');
     // TODO: add failure messaging
     this.enableCreateKeyButton();
+    this.clearPassPhrase();
   },
   enableCreateKeyButton: function () {
     var createKeyButton  = this.getUI('createKey');
     createKeyButton.removeClass('disabled');
     createKeyButton.removeAttr('disabled');
+  },
+  clearPassPhrase: function () {
+    var passPhrase = this.getUI('passphrase');
+
+    passPhrase.val('');
   },
   onRender: function () {
     console.log ('[signup view] rendered]');
@@ -123,5 +134,12 @@ module.exports = Marionette.View.extend({
     if (signupChannel.request('validate:bitMessageAddress', event.target.value)) {
       _self.model.set('bitMessageAddress', event.target.value);
     } else {
-    }  }
+    }
+  },
+  onCopyBtcPublic: function (event) {
+    signupChannel.trigger('btc:copy:public');
+  },
+  onCopyBtcPrivate: function (event) {
+    signupChannel.trigger('btc:copy:private');
+  },
 });

@@ -6,11 +6,15 @@
     </h2>
     <div class="ui hidden right dividing rail">
       <div class="ui cards">
-        <!--TODO: add copy to clipboard -->
+        <!--TODO: add 'success' notification after copy to clipboard -->
         <div class="card">
           <div class="content">
             <div class="header">Public</div>
             <div class="meta signup public btc key value"></div>
+            <button class="ui icon button copy public btc key value">
+              <i class="copy icon">&nbsp;</i>
+              Copy Public
+            </button>
           </div>
           <div class="ui image medium">
             <img class="signup public btc key qr" alt="public btc key" />
@@ -21,6 +25,10 @@
           <div class="ui image medium">
             <img class="signup private btc key qr" alt="private btc key wif formatted" />
           </div>
+          <button class="ui icon button copy private btc key value">
+            <i class="copy icon">&nbsp;</i>
+            Copy Private
+          </button>
         </div>
       </div>
     </div>

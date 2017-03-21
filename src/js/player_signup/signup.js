@@ -10,6 +10,7 @@ var SubComponent    = require('../_base/subcomponent'),
     appChannel      = Radio.channel('app'),
     FileSaver       = require('file-saver'),
     QR              = require('qrious'),
+    copyToClipboard = require('copy-to-clipboard'),
     currency,
     pgp,
     zeronet,
@@ -53,6 +54,8 @@ module.exports = SubComponent.extend({
     'pgp:create': 'pgpCreateKey',
     'user:create': 'createUser',
     'set:email': 'setEmail',
+    'btc:copy:public': 'copyPublicBTC',
+    'btc:copy:private': 'copyPrivateBTC'
   },
   signup: function () {
     // TODO: use sed or gulp to insert file path to console.log for all js files
@@ -84,7 +87,7 @@ module.exports = SubComponent.extend({
         console.log('[signup controller] pgp.createKey succeeded');
         _self.pgpKey = key;
         _self.model.set('pgpPublicKeyArmored', key.publicKeyArmored);
-        _self.downloadPrivateKey(key.privateKeyArmored);
+        _self.downloadFile('private-key.asc', key.privateKeyArmored);
         _self.getChannel().trigger('success:pgp:create');
       }, function (error){
         console.log('[signup controller] pgp.createKey failed');
@@ -94,8 +97,8 @@ module.exports = SubComponent.extend({
       // TODO: wait for currency module to gen a key before requesting a pgp key
     }
   },
-  downloadPrivateKey: function (text) {
-    var file = new File([text], 'private-key.asc', { type: 'text/plain' });
+  downloadFile: function (fileName, content) {
+    var file = new File([content], fileName, { type: 'text/plain' });
 
     FileSaver.saveAs(file);
   },
@@ -152,6 +155,16 @@ module.exports = SubComponent.extend({
       } else {
         _self.listenToOnce(_self.model, 'change:pgpPublicKeyArmored', _self.setEmail);
       }
+    }
+  },
+  copyPublicBTC: function () {
+    if (_self.btcAddress) {
+      copyToClipboard(_self.btcAddress.getAddress());
+    }
+  },
+  copyPrivateBTC: function () {
+    if (_self.btcAddress) {
+      copyToClipboard(_self.btcAddress.toWIF());
     }
   },
 });
