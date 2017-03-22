@@ -1,14 +1,10 @@
-var rootModel= require('../src/js/root/models/display');
+require('../src/js/bootstrap');
+require('./baseSpec');
+require('./rootSpec');
+require('./signupSpec');
 
-describe('Root Suite', function () {
-  it('contains a model whose defaults are set', function () {
-    var model = new rootModel();
 
-    expect(model.get('text')).toBe('This will be the future home of contre.bit')
-  })
-});
-
-describe('A suite', function () {
+describe('Main Suite', function () {
   it('contains spec with an expectation', function () {
     expect(true).toBe(true)
   })

@@ -66,6 +66,10 @@ gulp.task('clean:dist', function () {
   return del.sync([bundledJSFile, bundledMiniJSFile, 'src/js/**/*.chbs.js', 'dist/**/*', '!dist/images', '!dist/images/**/*']);
 });
 
+gulp.task('clean:tests', function () {
+  return del.sync(config.tests.entry);
+});
+
 gulp.task('sass', function () {
   return gulp.src(config.source.sass)
   .pipe(sass()) // Using gulp-sass
@@ -94,7 +98,7 @@ gulp.task('css', function () {
   .pipe(gulp.dest(config.destination.css));
 });
 
-gulp.task('javascript', ['handlebars'], function () {
+gulp.task('bundle:javascript', ['handlebars'], function () {
   return browserify(config.source.main)
   .bundle()
   .pipe(source(config.name + '.js'))
@@ -103,6 +107,15 @@ gulp.task('javascript', ['handlebars'], function () {
   .pipe(size())
   .pipe(gulp.dest(config.staging.js))
   .pipe(gulp.dest(config.destination.js));
+});
+
+gulp.task('bundle:tests', function () {
+  console.log('bundling: "' + config.tests.main +'"');
+  return browserify(config.tests.main)
+        .bundle()
+        .pipe(source('entry.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest(config.staging.tests));
 });
 
 gulp.task('handlebars', function () {
@@ -129,8 +142,8 @@ gulp.task('watch', ['browserSync'], function () {
   gulp.watch(bundledJSFile, browserSync.reload);
 
   // Other watchers
-  gulp.watch([config.source.js, '!*.chbs.js', '!' + bundledJSFile, '!'+bundledMiniJSFile], ['javascript']);
-  gulp.watch(config.source.hbs, ['javascript']);
+  gulp.watch([config.source.js, '!*.chbs.js', '!' + bundledJSFile, '!'+bundledMiniJSFile], ['bundle:javascript']);
+  gulp.watch(config.source.hbs, ['bundle:javascript']);
 });
 
 gulp.task('browserSync', function () {
@@ -144,23 +157,20 @@ gulp.task('browserSync', function () {
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
     'sass',
-    ['css', 'images', 'fonts', 'javascript', 'html'],
+    ['css', 'images', 'fonts', 'bundle:javascript', 'html'],
     ['cache:clear'],
     callback)
 });
  
 gulp.task('test', function () {
-  console.log('bundling: "' + config.tests.main +'"');
-  browserify(config.tests.main)
-  .bundle()
-  .pipe(source('entry.js'))
-  .pipe(buffer())
-  .pipe(gulp.dest(config.staging.tests));
-
-  console.log('testing: "' + config.tests.entry +'"');
-  gulp.src(config.tests.entry)
-    .pipe(jasmine({
-      verbose: true,
-      includeStackTrace: true
-  }));
+  return runSequence('clean:tests',
+    'bundle:tests',
+    function () {
+        console.log('testing: "' + config.tests.entry +'"');
+        gulp.src(config.tests.entry)
+          .pipe(jasmine({
+            verbose: true,
+            includeStackTrace: true
+        }));
+    });
 });
