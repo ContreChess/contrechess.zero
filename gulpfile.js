@@ -34,12 +34,14 @@ var config = {
   },
   staging: {
     css: 'src/css',
-    js: 'src/js'
+    js: 'src/js',
+    tests: 'spec'
   },
   tests: {
-    specs: 'spec/**/*.js',
     config: 'spec/support/jasmine.json',
-    entry: 'spec/mainSpec.js'
+    main: 'spec/mainSpec.js',
+    entry: 'spec/entry.js',
+    specs: 'spec/**/*.js'
   },
   destination: {
     baseDir: 'dist',
@@ -97,14 +99,7 @@ gulp.task('javascript', ['handlebars'], function () {
   .bundle()
   .pipe(source(config.name + '.js'))
   .pipe(buffer())
-  
-  /*
-  .pipe(sourceMaps.init())
-  .pipe(uglify())
-  .pipe(sourceMaps.write())
-  */
   .pipe(minify())
-
   .pipe(size())
   .pipe(gulp.dest(config.staging.js))
   .pipe(gulp.dest(config.destination.js));
@@ -155,9 +150,17 @@ gulp.task('build', function (callback) {
 });
  
 gulp.task('test', function () {
-  return gulp.src(config.tests.specs)
-  .pipe(jasmine({
-    verbose: true,
-    includeStackTrace: true
+  console.log('bundling: "' + config.tests.main +'"');
+  browserify(config.tests.main)
+  .bundle()
+  .pipe(source('entry.js'))
+  .pipe(buffer())
+  .pipe(gulp.dest(config.staging.tests));
+
+  console.log('testing: "' + config.tests.entry +'"');
+  gulp.src(config.tests.entry)
+    .pipe(jasmine({
+      verbose: true,
+      includeStackTrace: true
   }));
 });

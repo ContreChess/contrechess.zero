@@ -46,3 +46,4 @@ dist
 src/js/contre*.js
 *.chbs.js
 semantic/
+spec/entry.js
