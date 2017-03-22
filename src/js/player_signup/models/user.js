@@ -7,11 +7,11 @@ var $               = require('jquery'),
 
 module.exports = Backbone.Model.extend({
   defaults: {
-  userName: null,
-  pgpPublicKeyArmored: null,
-  btcAddress: null,
-  bitMessageAddress: null,
-  emailAddress: null
+    userName: null,
+    pgpPublicKeyArmored: null,
+    btcAddress: null,
+    bitMessageAddress: null,
+    emailAddress: null
   },
   initialize: function (options) {
     _self = this;

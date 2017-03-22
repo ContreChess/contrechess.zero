@@ -47,6 +47,7 @@
     "gulp-uglify": "2.0.1",
     "gulp-watchify": "0.6.0",
     "jasmine": "2.5.3",
+    "phantomjs-prebuilt": "2.1.14",
     "requirejs": "2.3.2",
     "run-sequence": "1.2.2",
     "underscore": "1.8.3",

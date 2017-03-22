@@ -56,11 +56,6 @@ gulp.task('hello', function () {
   console.log('Howdy');
 });
 
-gulp.task('test', function () {
-  return gulp.src(config.tests.specs)
-  .pipe(jasmine())
-});
-
 gulp.task('cache:clear', function (callback) {
   return cache.clearAll(callback);
 });
@@ -160,8 +155,9 @@ gulp.task('build', function (callback) {
 });
  
 gulp.task('test', function () {
-  gulp.src(config.tests.baseDir + '/' + config.tests.entry)
-  // gulp-jasmine works on filepaths so you can't have any plugins before it 
-  .pipe(jasmine());
+  return gulp.src(config.tests.specs)
+  .pipe(jasmine({
+    verbose: true,
+    includeStackTrace: true
+  }));
 });
-
