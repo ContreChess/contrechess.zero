@@ -1,24 +1,25 @@
-var gulp        = require('gulp'),
-    fs          = require('fs'),
-    sass        = require('gulp-sass'),
-    browserSync = require('browser-sync').create(),
-    del         = require('del'),
-    gulpIf      = require('gulp-if'),
-    imagemin    = require('gulp-imagemin'),
-    runSequence = require('run-sequence'),
-    jasmine     = require('gulp-jasmine'),
-    browserify  = require('browserify'),
-    watchify    = require('gulp-watchify'),
-    uglify      = require('gulp-uglify'),
-    minify      = require('gulp-minify'),
-    cache       = require('gulp-cache'),
-    size        = require('gulp-size'),
-    sourceMaps  = require('gulp-sourcemaps'),
-    defmod      = require('gulp-define-module'),
-    handlebars  = require('gulp-handlebars'),
-    rename      = require('gulp-rename'),
-    source      = require('vinyl-source-stream'),
-    buffer      = require('vinyl-buffer');
+var gulp            = require('gulp'),
+    fs              = require('fs'),
+    sass            = require('gulp-sass'),
+    browserSync     = require('browser-sync').create(),
+    del             = require('del'),
+    gulpIf          = require('gulp-if'),
+    imagemin        = require('gulp-imagemin'),
+    runSequence     = require('run-sequence'),
+    jasmine         = require('gulp-jasmine'),
+    jasmineBrowser  = require('gulp-jasmine-browser'),
+    browserify      = require('browserify'),
+    watchify        = require('gulp-watchify'),
+    uglify          = require('gulp-uglify'),
+    minify          = require('gulp-minify'),
+    cache           = require('gulp-cache'),
+    size            = require('gulp-size'),
+    sourceMaps      = require('gulp-sourcemaps'),
+    defmod          = require('gulp-define-module'),
+    handlebars      = require('gulp-handlebars'),
+    rename          = require('gulp-rename'),
+    source          = require('vinyl-source-stream'),
+    buffer          = require('vinyl-buffer');
 
 var config = {
   name: 'contre',
@@ -166,11 +167,33 @@ gulp.task('test', function () {
   return runSequence('clean:tests',
     'bundle:tests',
     function () {
-        console.log('testing: "' + config.tests.entry +'"');
+        console.log('testing: "' + config.tests.entry + '"');
         gulp.src(config.tests.entry)
           .pipe(jasmine({
             verbose: true,
             includeStackTrace: true
         }));
+    });
+});
+
+gulp.task('test:headless', function () {
+  return runSequence('clean:tests',
+    'bundle:tests',
+    function () {
+      console.log('testing: "' + config.tests.entry + '"');
+      gulp.src(config.tests.entry)
+      .pipe(jasmineBrowser.specRunner({ console: true }))
+      .pipe(jasmineBrowser.headless());
+    });
+});
+
+gulp.task('test:browser', function () {
+  return runSequence('clean:tests',
+    'bundle:tests',
+    function () {
+      console.log('testing: "' + config.tests.entry + '"');
+      gulp.src(config.tests.entry)
+      .pipe(jasmineBrowser.specRunner())
+      .pipe(jasmineBrowser.server());
     });
 });
