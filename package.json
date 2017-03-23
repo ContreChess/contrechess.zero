@@ -35,6 +35,7 @@
     "gulp": "3.9.1",
     "gulp-cache": "0.4.5",
     "gulp-define-module": "0.1.5",
+    "gulp-docker": "0.0.12",
     "gulp-handlebars": "4.0.0",
     "gulp-if": "2.0.2",
     "gulp-imagemin": "3.1.1",

@@ -42,7 +42,7 @@ describe('Base Suite', function () {
   it('contains a MarionetteJS-based component which can add components', function () {
     component.addComponent('foo', { componentClass: Object });
 
-    expect(component.components['foo']).not.toBe(undefined);
+    expect(component.components['foo']).not.toBeUndefined();
   })
 
   it('contains a MarionetteJS-based component which instantiates a component when adding components', function () {
