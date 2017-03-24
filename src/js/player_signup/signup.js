@@ -10,6 +10,7 @@ var SubComponent    = require('../_base/subcomponent'),
     appChannel      = Radio.channel('app'),
     FileSaver       = require('file-saver'),
     QR              = require('qrious'),
+    BitMessage      = require('bitmessage');
     copyToClipboard = require('copy-to-clipboard'),
     currency,
     pgp,
@@ -56,6 +57,9 @@ module.exports = SubComponent.extend({
     'set:email': 'setEmail',
     'btc:copy:public': 'copyPublicBTC',
     'btc:copy:private': 'copyPrivateBTC'
+  },
+  radioRequests: {
+    'validate:bitMessageAddress': 'validateBitMessageAddress'
   },
   signup: function () {
     // TODO: use sed or gulp to insert file path to console.log for all js files
@@ -166,5 +170,17 @@ module.exports = SubComponent.extend({
       copyToClipboard(_self.btcAddress.toWIF());
     }
   },
+  validateBitMessageAddress: function (value) {
+    // TODO: refactor out into bitmessage utility
+    var result;
+
+    try {
+      result = BitMessage.Address.decode(value);
+    } catch (e) {
+      return false;
+    }
+
+    return BitMessage.Address.isAddress(result);
+  }
 });
  
