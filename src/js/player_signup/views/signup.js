@@ -102,11 +102,13 @@ module.exports = Marionette.View.extend({
   onBtcCreateSuccess: function (btcAddress, qrPublic, qrPrivate) {
     var publicBTC = this.getUI('publicBTC'),
         qrPublicBTC = this.getUI('qrPublicBTC'),
-        qrPrivateBTC = this.getUI('qrPrivateBTC');
+        qrPrivateBTC = this.getUI('qrPrivateBTC'),
+        rightRail = this.getUI('rightRail');
 
     publicBTC.html(btcAddress);
     qrPublicBTC.attr('src', qrPublic.toDataURL());
     qrPrivateBTC.attr('src', qrPrivate.toDataURL());
+    rightRail.removeClass('hidden');
   },
   onNameChanged: function (event) {
     this.model.set('userName', event.target.value);

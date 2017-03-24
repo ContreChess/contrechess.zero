@@ -1,27 +1,79 @@
-<div class="ui middle aligned center aligned grid">
-  <div class="column">
-    <h2 class="ui teal image header">
-      <img src="images/game.svg" class="image" style="width: 60px; height: 60px" alt="logo">
-      <div class="content">Create account</div>
-    </h2>
-    <div class="ui hidden right dividing rail">
+<div class="ui container">
+  <div class="ui grid">
+    <div class="centered row">
+      <div class"sixteen wide column">
+        <h2 class="ui teal image header">
+          <img src="images/game.svg" class="image" style="width: 60px; height: 60px" alt="logo">
+          <div class="content">Create account</div>
+        </h2>
+      </div>
+    </div>
+    <div class="nine wide column">
+      <form id="signupform" class="ui large form">
+        <div class="ui stacked segment">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon">&nbsp;</i>
+              <input type="text" name="name" placeholder="Name" />
+            </div>
+          </div>
+          <div class="field">
+            <label>PGP Public Key</label>
+            <textarea name="pgppublickeyarmored" rows="4"></textarea>
+          </div>
+          <div class="ui message">
+            <div class="header">PGP Keys</div>
+            <p>Don't have a PGP key yet? We can <a class="show pgp generation" href="#">create</a> one for you.</p>
+            <div class="ui hidden pgp generation inputs">
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="comments icon">&nbsp;</i>
+                  <input type="text" name="passphrase" placeholder="pass phrase" />
+                </div>
+              </div>
+              <button class="ui fluid labeled icon button create key">
+                <i class="spy icon">&nbsp;</i>
+                Create Key
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="mail icon">&nbsp;</i>
+              <input type="text" name="bitmessage-address" placeholder="BM-*" />
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="mail icon">&nbsp;</i>
+              <input type="text" name="email" placeholder="E-mail address" />
+            </div>
+          </div>
+          <button class="ui fluid large teal submit button">Sign up</button>
+        </div>
+        <div class="ui error message"></div>
+      </form>
+    </div>
+    <div class="seven wide column">
       <div class="ui cards">
         <!--TODO: add 'success' notification after copy to clipboard -->
         <div class="card">
           <div class="content">
             <div class="header">Public</div>
             <div class="meta signup public btc key value"></div>
-            <button class="ui icon button copy public btc key value">
-              <i class="copy icon">&nbsp;</i>
-              Copy Public
-            </button>
           </div>
           <div class="ui image medium">
             <img class="signup public btc key qr" alt="public btc key" />
           </div>
+          <button class="ui icon button copy public btc key value">
+            <i class="copy icon">&nbsp;</i>
+            Copy Public
+          </button>
         </div>
         <div class="card">
-          <div class="content"><span>Private</span></div>
+          <div class="content">
+            <div class="header">Private</div>
+          </div>
           <div class="ui image medium">
             <img class="signup private btc key qr" alt="private btc key wif formatted" />
           </div>
@@ -32,49 +84,5 @@
         </div>
       </div>
     </div>
-    <form id="signupform" class="ui large form">
-      <div class="ui stacked segment">
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="user icon">&nbsp;</i>
-            <label>Name</label><!--Name label might not be needed with an icon-->
-            <input type="text" name="name" placeholder="Name" />
-          </div>
-        </div>
-        <div class="field">
-          <label>publickey</label>
-          <textarea name="pgppublickeyarmored" rows="4"></textarea>
-        </div>
-        <div class="ui message">
-          <div class="header">PGP Keys</div>
-          <p>Don't have a PGP key yet? We can <a class="show pgp generation" href="#">create</a> one for you.</p>
-          <div class="hidden pgp generation inputs">
-            <div class="field">
-              <i class="comments icon">&nbsp;</i>
-              <input class="ui left icon input" type="text" name="passphrase" placeholder="pass phrase" />
-            </div>
-            <button class="ui labeled icon button create key">
-              <i class="spy icon">&nbsp;</i>
-              Create Key
-            </button>
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="mail icon">&nbsp;</i>
-            <input type="text" name="bitmessage-address" placeholder="BM-*" />
-          </div>
-        </div>
-        <div class="field">
-          <div class="ui left icon input">
-            <i class="mail icon">&nbsp;</i>
-            <input type="text" name="email" placeholder="E-mail address" />
-          </div>
-        </div>
-        <button class="ui fluid large teal submit button">Sign up</button>
-      </div>
-      <div class="ui error message"></div>
-    </form>
   </div>
 </div>
-

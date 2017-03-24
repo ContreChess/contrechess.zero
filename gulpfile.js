@@ -99,6 +99,20 @@ gulp.task('css', function () {
   .pipe(gulp.dest(config.destination.css));
 });
 
+gulp.task('semantic', function () {
+  gulp.src('semantic/dist/semantic.css')
+  .pipe(gulp.dest(config.staging.css))
+  .pipe(gulp.dest(config.destination.css));
+
+  gulp.src('semantic/dist/themes/default/**')
+  .pipe(gulp.dest(config.staging.css + '/themes/default'))
+  .pipe(gulp.dest(config.destination.css + '/themes/default'));
+
+  gulp.src('semantic/dist/semantic.js')
+  .pipe(gulp.dest(config.staging.js))
+  .pipe(gulp.dest(config.destination.js));
+});
+
 gulp.task('bundle:javascript', ['handlebars'], function () {
   return browserify(config.source.main)
   .bundle()
@@ -158,7 +172,7 @@ gulp.task('browserSync', function () {
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
     'sass',
-    ['css', 'images', 'fonts', 'bundle:javascript', 'html'],
+    ['css', 'semantic', 'images', 'fonts', 'bundle:javascript', 'html'],
     ['cache:clear'],
     callback)
 });

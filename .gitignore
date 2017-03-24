@@ -47,3 +47,5 @@ src/js/contre*.js
 *.chbs.js
 semantic/
 spec/entry.js
+src/**/semantic.*
+src/css/themes/
