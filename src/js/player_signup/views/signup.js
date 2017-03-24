@@ -33,6 +33,8 @@ module.exports = Marionette.View.extend({
     copyPublicBTC: 'button.copy.public.btc.key',
     qrPrivateBTC: '.signup.private.btc.key.qr',
     copyPrivateBTC: 'button.copy.private.btc.key',
+    showPgpGeneration: 'a.show.pgp.generation',
+    pgpGenerationInputs: '.pgp.generation.inputs',
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     passphrase: 'input[type=text][name=passphrase]',
@@ -51,7 +53,8 @@ module.exports = Marionette.View.extend({
     'change @ui.emailAddress': 'onEmailAddressChanged',
     'change @ui.bitMessageAddress': 'onBitMessageAddressChanged',
     'click @ui.copyPublicBTC': 'copy:btc:public',
-    'click @ui.copyPrivateBTC': 'copy:btc:private'
+    'click @ui.copyPrivateBTC': 'copy:btc:private',
+    'click @ui.showPgpGeneration' : 'onShowPgpGeneration'
   },
   modelEvents: {
     'change:pgpPublicKeyArmored': function (model, value) {
@@ -144,4 +147,9 @@ module.exports = Marionette.View.extend({
   onCopyBtcPrivate: function (event) {
     signupChannel.trigger('btc:copy:private');
   },
+  onShowPgpGeneration: function (event) {
+    var pgpGenerationInputs = _self.getUI('pgpGenerationInputs');
+
+    pgpGenerationInputs.show();
+  }
 });

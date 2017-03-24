@@ -77,7 +77,6 @@ module.exports = SubComponent.extend({
   },
   pgpCreateKey: function (passPhrase) {
     if (_self.btcAddress) {
-      // TODO: get the user's passphrase
       pgp.createKey({
         name: _self.model.get('userName'),
         address: _self.model.get('btcAddress'),
