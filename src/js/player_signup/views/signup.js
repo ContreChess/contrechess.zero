@@ -65,9 +65,10 @@ module.exports = Marionette.View.extend({
     var createKeyButton  = this.getUI('createKey'),
         passPhrase = this.getUI('passphrase');
     // TODO: validate passphrase
-    createKeyButton.addClass('disabled');
+    createKeyButton.addClass('disabled loading');
     createKeyButton.attr('disabled', 'disabled');
-    // TODO: change to loading button
+    createKeyButton.attr('disabled', 'disabled');
+
     signupChannel.trigger('pgp:create', passPhrase.val());
   },
   formSubmit: function () {
@@ -87,7 +88,7 @@ module.exports = Marionette.View.extend({
   },
   enableCreateKeyButton: function () {
     var createKeyButton  = this.getUI('createKey');
-    createKeyButton.removeClass('disabled');
+    createKeyButton.removeClass('disabled loading');
     createKeyButton.removeAttr('disabled');
   },
   clearPassPhrase: function () {
