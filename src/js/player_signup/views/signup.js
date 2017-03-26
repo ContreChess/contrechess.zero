@@ -1,4 +1,5 @@
 var Marionette    = require('backbone.marionette'),
+    $             = requier('jquery'),
     Radio         = require('backbone.radio'),
     Model         = require('../models/user'),
     tmpl          = require('../templates/signup.chbs'),
@@ -21,7 +22,6 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
 
     this.listenTo(signupChannel, 'success:btc:create', this.onBtcCreateSuccess);
-
   },
   template: function () {
     return tmpl(_self.model.toJSON());
@@ -95,8 +95,22 @@ module.exports = Marionette.View.extend({
 
     passPhrase.val('');
   },
-  onRender: function () {
-    console.log ('[signup view] rendered]');
+  onRender: function (view) {
+    var copyPublicBTC = this.getUI('copyPublicBTC'),
+        buttons = copyPublicBTC.add(this.getUI('copyPrivateBTC'));
+
+    if ($.fn.popup) {
+      buttons.popup({
+        on: 'click',
+        content: 'Copied!',
+        onShow: function () {
+          var _selector  = this;
+          setTimeOut(function () {
+            _selector.popup('hide');
+          }, 2000);
+        }
+      });
+    }
   },
   onUserCreateSuccess: function () {
   },
@@ -151,5 +165,5 @@ module.exports = Marionette.View.extend({
     var pgpGenerationInputs = _self.getUI('pgpGenerationInputs');
 
     pgpGenerationInputs.show();
-  }
+  },
 });
