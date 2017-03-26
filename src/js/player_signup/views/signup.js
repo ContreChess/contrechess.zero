@@ -38,6 +38,7 @@ module.exports = Marionette.View.extend({
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     passphrase: 'input[type=text][name=passphrase]',
+    passphraseRequiredMessage: '.passphrase.required.message',
     createKey: 'button.create.key',
     bitMessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
@@ -52,6 +53,7 @@ module.exports = Marionette.View.extend({
     'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
     'change @ui.emailAddress': 'onEmailAddressChanged',
     'change @ui.bitMessageAddress': 'onBitMessageAddressChanged',
+    'change @ui.passphrase': 'onPassphraseChanged',
     'click @ui.copyPublicBTC': 'copy:btc:public',
     'click @ui.copyPrivateBTC': 'copy:btc:private',
     'click @ui.showPgpGeneration' : 'onShowPgpGeneration'
@@ -63,8 +65,14 @@ module.exports = Marionette.View.extend({
   },
   onPgpCreate: function () {
     var createKeyButton  = this.getUI('createKey'),
-        passPhrase = this.getUI('passphrase');
-    // TODO: validate passphrase
+        passPhrase = this.getUI('passphrase'),
+        passphraseRequiredMessage = this.getUI('passphraseRequiredMessage');
+    // validate passphrase
+    if (!passPhrase.val()) {
+      passphraseRequiredMessage.addClass('error');
+      return false;
+    }
+    
     createKeyButton.addClass('disabled loading');
     createKeyButton.attr('disabled', 'disabled');
     createKeyButton.attr('disabled', 'disabled');
@@ -167,4 +175,11 @@ module.exports = Marionette.View.extend({
 
     pgpGenerationInputs.show();
   },
+  onPassphraseChanged: function (event) {
+    var passphrase = _self.getUI('passphrase'),
+        passphraseRequiredMessage = _self.getUI('passphraseRequiredMessage');
+    if (passphrase.val()) {
+      passphraseRequiredMessage.removeClass('error');
+    }
+  }
 });
