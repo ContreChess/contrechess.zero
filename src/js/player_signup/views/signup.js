@@ -136,7 +136,7 @@ module.exports = Marionette.View.extend({
   },
   onBitMessageAddressChanged: function (event) {
     // TODO: validate bitmessage address
-    if (signupChannel.request('validate:bitMessageAddress', event.target.value)) {
+    if (signupChannel.request('validate:bitmessage', event.target.value)) {
       _self.model.set('bitMessageAddress', event.target.value);
     } else {
     }
