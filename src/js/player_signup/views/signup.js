@@ -1,5 +1,5 @@
 var Marionette    = require('backbone.marionette'),
-    $             = requier('jquery'),
+    $             = require('jquery'),
     Radio         = require('backbone.radio'),
     Model         = require('../models/user'),
     tmpl          = require('../templates/signup.chbs'),
@@ -21,7 +21,7 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'success:user:create', this.onUserCreateSuccess);
     this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
 
-    this.listenTo(signupChannel, 'success:btc:create', this.onBtcCreateSuccess);
+    this.listenTo(signupChannel, 'success:btc:get', this.onBtcGetSuccess);
   },
   template: function () {
     return tmpl(_self.model.toJSON());
@@ -31,32 +31,29 @@ module.exports = Marionette.View.extend({
     publicBTC: '.signup.public.btc.key.value',
     qrPublicBTC: '.signup.public.btc.key.qr',
     copyPublicBTC: 'button.copy.public.btc.key',
-    qrPrivateBTC: '.signup.private.btc.key.qr',
-    copyPrivateBTC: 'button.copy.private.btc.key',
-    showPgpGeneration: 'a.show.pgp.generation',
+    showPgpGeneration: 'button.show.pgp.generation',
     pgpGenerationInputs: '.pgp.generation.inputs',
     name: 'input[type=text][name=name]',
     pgpPublicKeyArmored: 'textarea[name=pgppublickeyarmored]',
     passphrase: 'input[type=text][name=passphrase]',
     passphraseRequiredMessage: '.passphrase.required.message',
     createKey: 'button.create.key',
-    bitMessageAddress: 'input[type=text][name=bitmessage-address]',
+    bitmessageAddress: 'input[type=text][name=bitmessage-address]',
     emailAddress: 'input[type=text][name=email]',
     submit: 'button.submit.button',
     form: '#signupform'
   },
   triggers: {
     'click @ui.createKey': 'pgp:create',
-    'submit @ui.form': 'formSubmit',
-    'change @ui.name': 'onNameChanged',
-    'input @ui.name': 'onNameChanging',
-    'change @ui.pgpPublicKeyArmored': 'onPgpPublicKeyArmoredChanged', 
-    'change @ui.emailAddress': 'onEmailAddressChanged',
-    'change @ui.bitMessageAddress': 'onBitMessageAddressChanged',
-    'change @ui.passphrase': 'onPassphraseChanged',
+    'submit @ui.form': 'form:submit',
+    'change @ui.name': 'name:changed',
+    'input @ui.name': 'name:changing',
+    'change @ui.pgpPublicKeyArmored': 'pgp:publicKey:armored:changed', 
+    'change @ui.emailAddress': 'email:address:changed',
+    'change @ui.bitmessageAddress': 'bitmessage:address:changed',
+    'change @ui.passphrase': 'passphrase:changed',
     'click @ui.copyPublicBTC': 'copy:btc:public',
-    'click @ui.copyPrivateBTC': 'copy:btc:private',
-    'click @ui.showPgpGeneration' : 'onShowPgpGeneration'
+    'click @ui.showPgpGeneration' : 'show:pgp:generation'
   },
   modelEvents: {
     'change:pgpPublicKeyArmored': function (model, value) {
@@ -79,7 +76,7 @@ module.exports = Marionette.View.extend({
 
     signupChannel.trigger('pgp:create', passPhrase.val());
   },
-  formSubmit: function () {
+  onFormSubmit: function () {
     signupChannel.trigger('user:create');
     return false;
   },
@@ -106,7 +103,7 @@ module.exports = Marionette.View.extend({
   },
   onRender: function (view) {
     var copyPublicBTC = this.getUI('copyPublicBTC'),
-        buttons = copyPublicBTC.add(this.getUI('copyPrivateBTC'));
+        buttons = copyPublicBTC;
 
     if ($.fn.popup) {
       buttons.popup({
@@ -114,7 +111,7 @@ module.exports = Marionette.View.extend({
         content: 'Copied!',
         onShow: function () {
           var _selector  = this;
-          setTimeOut(function () {
+          setTimeout(function () {
             _selector.popup('hide');
           }, 2000);
         }
@@ -125,57 +122,58 @@ module.exports = Marionette.View.extend({
   },
   onUserCreateFailure: function () {
   },
-  onBtcCreateSuccess: function (btcAddress, qrPublic, qrPrivate) {
+  onBtcGetSuccess: function (btcAddress, qrPublic) {
     var publicBTC = this.getUI('publicBTC'),
         qrPublicBTC = this.getUI('qrPublicBTC'),
-        qrPrivateBTC = this.getUI('qrPrivateBTC'),
         rightRail = this.getUI('rightRail');
 
     publicBTC.html(btcAddress);
     qrPublicBTC.attr('src', qrPublic.toDataURL());
-    qrPrivateBTC.attr('src', qrPrivate.toDataURL());
     rightRail.removeClass('hidden');
   },
-  onNameChanged: function (event) {
-    this.model.set('userName', event.target.value);
+  onNameChanged: function () {
+    this.model.set('userName', _self.getUI('name').val());
   },
-  onNameChanging: function (event) {
+  onNameChanging: function () {
     // TODO: verify that handle isn't taken yet
   },
-  onPgpPublicKeyArmoredChanged: function (event) {
+  onPgpPublicKeyArmoredChanged: function () {
+    var pgpPublicKeyArmored = _self.getUI('pgpPublicKeyArmored');
+
     if (_self.model.has('pgpPublicKeyArmored') &&
-        _self.model.get('pgpPublicKeyArmored') === event.target.value) {
+        _self.model.get('pgpPublicKeyArmored') === pgpPublicKeyArmored.val()) {
       return false;
     }
 
-    _self.model.set('pgpPublicKeyArmored', event.target.value);
+    _self.model.set('pgpPublicKeyArmored', pgpPublicKeyArmored.val());
   },
-  onEmailAddressChanged: function (event) {
-    // TODO: validate email address
-    if (signupChannel.request('validate:email', event.target.value)) {
-      signupChannel.trigger('set:email', event.target.value);
+  onEmailAddressChanged: function () {
+    var emailAddress = _self.getUI('emailAddress');
+
+    // validate email address
+    if (signupChannel.request('validate:email', emailAddress.val())) {
+      signupChannel.trigger('set:email', emailAddress);
     } else {
+      // TODO: add validation error messaging
     }
   },
-  onBitMessageAddressChanged: function (event) {
-    // TODO: validate bitmessage address
-    if (signupChannel.request('validate:bitmessage', event.target.value)) {
-      _self.model.set('bitMessageAddress', event.target.value);
+  onBitmessageAddressChanged: function () {
+    var bitmessageAddress = _self.getUI('bitmessageAddress');
+    if (signupChannel.request('validate:bitmessage', bitmessageAddress.val())) {
+      _self.model.set('bitmessageAddress', bitmessageAddress.val());
     } else {
+      // TODO: add validation error messaging
     }
   },
-  onCopyBtcPublic: function (event) {
+  onCopyBtcPublic: function () {
     signupChannel.trigger('btc:copy:public');
   },
-  onCopyBtcPrivate: function (event) {
-    signupChannel.trigger('btc:copy:private');
-  },
-  onShowPgpGeneration: function (event) {
+  onShowPgpGeneration: function () {
     var pgpGenerationInputs = _self.getUI('pgpGenerationInputs');
 
     pgpGenerationInputs.show();
   },
-  onPassphraseChanged: function (event) {
+  onPassphraseChanged: function () {
     var passphrase = _self.getUI('passphrase'),
         passphraseRequiredMessage = _self.getUI('passphraseRequiredMessage');
     if (passphrase.val()) {

@@ -2,7 +2,7 @@ var Marionette      = require('backbone.marionette'),
     Backbone        = require('backbone'),
     nextMessageId   = 1,
     wrapperNonce    = document.location.href.replace(/.*wrapper_nonce=([A-Zaz0-9]+).*/, '$1'),
-    pendingPromises = {},
+    pendingZeroNetMessages = {},
     siteInfoModel,
     target,
     _self;
@@ -12,18 +12,39 @@ module.exports = Marionette.Object.extend({
   initialize: function (options) {
     _self = this;
     target = window.parent;
+    // TODO: get smart enough to know when running inside ZeroNet or not (window.parent == window)
     addEventListener('message', this.onMessageReceived, false);
   },
   send: function (message) {
+    var wrapperNonce = document.location.href.replace(/.*wrapper_nonce=([A-Za-z0-9]+).*/, "$1");
+
+    message.id = nextMessageId++;
+    message.wrapper_nonce = wrapperNonce;
+
     var promise = new Promise(function (resolve, reject) {
       if (!message) {
         reject(new Error('[src/js/utilities/zeronet] no message supplied'));
       }
 
-      message.wrapper_nonce = wrapperNonce;
-      message.id = nextMessageId++;
-      pendingPromises[message.id] = this;
       target.postMessage(message, '*');
+
+      var retryCounter = 10;
+      setTimeout(function waitOnZeroNet() {
+        var zeroNetMessage = pendingZeroNetMessages[message.id];
+
+        if (zeroNetMessage) {
+          delete pendingZeroNetMessages[message.id];
+          // TODO: resolve/reject based on ZeroFrame specific response data 
+          resolve(zeroNetMessage.result);
+        } else {
+          if (retryCounter) {
+            setTimeout(waitOnZeroNet, 1000);
+            retryCounter--;
+          } else {
+            reject(new Error('[src/js/utilities/zeronet] exceeded retry attempts for message, id: ' + message.id));
+          }
+        }
+      }, 500);
     });
 
     return promise;
@@ -31,17 +52,12 @@ module.exports = Marionette.Object.extend({
   // message consists of message.id, message.cmd and message.data
   onMessageReceived: function (event) {
     var message = event.data,
-        cmd = event.cmd;
+        cmd = message.cmd;
 
-    switch (event.cmd) {
+    switch (cmd) {
       case 'response':
-        var promise = pendingPromises[message.to];
-        if (promise) {
-          promise.resolve(message.result);
-          delete pendingPromises[message.to];
-        } else {
-          console.log('[src/js/utilities/zeronet] pending promises out of sync', message.to);
-        }
+          pendingZeroNetMessages[message.to] = message;
+          console.log('[src/js/utilities/zeronet] new zeronet message awaiting processing', message);
         break;
       case 'wrapperReady':
         _self.send({ cmd: 'innerReady', params: {} });

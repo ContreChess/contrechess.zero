@@ -10,7 +10,7 @@ var SubComponent    = require('../_base/subcomponent'),
     appChannel      = Radio.channel('app'),
     FileSaver       = require('file-saver'),
     QR              = require('qrious'),
-    BitMessage      = require('bitmessage');
+    BitMessage      = require('bitmessage'),
     copyToClipboard = require('copy-to-clipboard'),
     currency,
     pgp,
@@ -70,13 +70,18 @@ module.exports = SubComponent.extend({
       .getParentComponent().showView(_self.getView());
 
     currency
-      .btcCreateKey()
+      .btcFromWIF(inigo.getUserContentBitcoinSignatureWIF())
       .then(function (key) {
-        _self.btcAddress = key;
-        _self.model.set('btcAddress', key.getAddress());
-        var qrPublic = new QR({ value: 'bitcoin:' + key.getAddress() }),
-            qrPrivate = new QR({ value: key.toWIF() });
-        _self.getChannel().trigger('success:btc:create', key.getAddress(), qrPublic, qrPrivate);
+        _self.contentAddress = key;
+      });
+
+    zeronet
+      .getSiteInfo()
+      .then(function (siteInfo) {
+        _self.btcAddress = siteInfo.auth_address;
+        _self.model.set('btcAddress', siteInfo.auth_address);
+        var qrPublic = new QR({ value: 'bitcoin:' + siteInfo.auth_address });
+        _self.getChannel().trigger('success:btc:get', siteInfo.auth_address, qrPublic);
       });
 
   },
@@ -98,7 +103,7 @@ module.exports = SubComponent.extend({
         _self.getChannel().trigger('fail:pgp:create');
       });
     } else {
-      _self.listenToOnce(_self.getChannel(), 'success:btc:create', _self.pgpCreateKey(passPhrase));
+      _self.listenToOnce(_self.getChannel(), 'success:btc:get', _self.pgpCreateKey(passPhrase));
       // btcAddress isn't ready yet, attempt again later
     }
   },
@@ -117,13 +122,10 @@ module.exports = SubComponent.extend({
     
     var filePath = 'data/users/' + _self.model.get('btcAddress') + '/user.json';
 
-    zeronet
-      .getSiteInfo()
-      .then(function (siteInfo) {
-        // 2. sign site address plus user address in base64
-        //    using user address private key
-        var textToSign = siteInfo.auth_address + '#web/' + _self.model.get('btcAddress'),
-            cert = _self.btcAddress.sign(textToSign.toString('base64'));
+    // 2. sign user address, plus cert type, plus user address (again) in base64
+    //    using site's user content address private key
+    var textToSign = _self.model.get('btcAddress') + '#web/' + _self.model.get('btcAddress'),
+        cert = currency.btcSignMessage(_self.contentAddress, textToSign).toString('base64');
 
         return zeronet.addCertificate(cert);
       })
@@ -164,12 +166,7 @@ module.exports = SubComponent.extend({
   },
   copyPublicBTC: function () {
     if (_self.btcAddress) {
-      copyToClipboard(_self.btcAddress.getAddress());
-    }
-  },
-  copyPrivateBTC: function () {
-    if (_self.btcAddress) {
-      copyToClipboard(_self.btcAddress.toWIF());
+      copyToClipboard(_self.btcAddress);
     }
   },
   validateBitMessageAddress: function (value) {

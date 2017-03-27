@@ -10,7 +10,7 @@ module.exports = Backbone.Model.extend({
     userName: null,
     pgpPublicKeyArmored: null,
     btcAddress: null,
-    bitMessageAddress: null,
+    bitmessageAddress: null,
     emailAddress: null
   },
   initialize: function (options) {

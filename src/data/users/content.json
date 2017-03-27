@@ -1,0 +1,23 @@
+
+{
+ "address": "",
+ "files": {},
+ "ignore": ".*",
+ "inner_path": "data/users/content.json",
+ "modified": 1457432700.86839,
+ "signs": {
+  "": ""
+ },
+ "user_contents": {
+  "cert_signers": {
+   "contrechess.io": [ "199prLGiwmXEYQBmV9wT7zRELap8s1Zoeh" ],
+  },
+  "permission_rules": {
+   ".*": {
+    "files_allowed": "(avatar.png|data.json|user.json)",
+    "max_size": 20000
+   }
+  },
+  "permissions": {}
+ }
+}

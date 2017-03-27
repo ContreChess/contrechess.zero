@@ -66,13 +66,14 @@ I might also want to use `gulp-cssnano` to do the same thing for css
 13. 
 
 Directories
-- site (main)
+- site (main) 10MB
   - data/
   |- users/
   |  |- <address>
   |  |  |- content.json
   |  |  |- user.json
-- site (games) 10GB
+  |  |  |- avatar.png
+- site (games) 10MB
   - data/
   |- games
   |  |- <multi-sig address>
@@ -82,7 +83,7 @@ Directories
   |  |  |- chat/
   |  |  |  | - epochTime.address.json/
 
-- site (solicitations) 200MB need a policy to delete these periodically
+- site (solicitations) 10MB need a policy to delete these periodically
   - data/
   |  |- <guid> (acceptance deletes offer, creates game, counter deletes offer, creates new offer)
   |  |  |- offer.json
