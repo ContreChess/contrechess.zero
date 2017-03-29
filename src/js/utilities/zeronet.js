@@ -1,8 +1,10 @@
 var Marionette      = require('backbone.marionette'),
     Backbone        = require('backbone'),
+    ZeroNetError    = require('../_base/zeroneterror.js'),
     nextMessageId   = 1,
     wrapperNonce    = document.location.href.replace(/.*wrapper_nonce=([A-Zaz0-9]+).*/, '$1'),
     pendingZeroNetMessages = {},
+    pendingPromiseResolvers = {},
     siteInfoModel,
     target,
     _self;
@@ -26,9 +28,15 @@ module.exports = Marionette.Object.extend({
         reject(new Error('[src/js/utilities/zeronet] no message supplied'));
       }
 
-      target.postMessage(message, '*');
 
-      var retryCounter = 10;
+    target.postMessage(message, '*');
+
+    pendingPromiseResolvers[message.id] = {
+      cmd: message.cmd,
+      resolve: resolve,
+      reject: reject
+    };
+      /*var waitCounter = 30;
       setTimeout(function waitOnZeroNet() {
         var zeroNetMessage = pendingZeroNetMessages[message.id];
 
@@ -37,15 +45,18 @@ module.exports = Marionette.Object.extend({
           // TODO: resolve/reject based on ZeroFrame specific response data 
           resolve(zeroNetMessage.result);
         } else {
-          if (retryCounter) {
+          if (waitCounter) {
             setTimeout(waitOnZeroNet, 1000);
-            retryCounter--;
+            waitCounter--;
           } else {
-            reject(new Error('[src/js/utilities/zeronet] exceeded retry attempts for message, id: ' + message.id));
+            reject(new Error('[src/js/utilities/zeronet] exceeded timeout for message, id: ' + message.id));
           }
         }
       }, 500);
+      */
     });
+
+    
 
     return promise;
   },
@@ -56,8 +67,19 @@ module.exports = Marionette.Object.extend({
 
     switch (cmd) {
       case 'response':
-          pendingZeroNetMessages[message.to] = message;
-          console.log('[src/js/utilities/zeronet] new zeronet message awaiting processing', message);
+          //pendingZeroNetMessages[message.to] = message;
+          //console.log('[src/js/utilities/zeronet] new zeronet message awaiting processing', message);
+          var pendingPromiseResolver = pendingPromiseResolvers[message.to]
+          if(pendingPromiseResolver) {
+            if (_self.shouldResolve(pendingPromiseResolver.cmd, message)) {
+              pendingPromiseResolver.resolve(message.result || message);
+            } else {
+              // TODO: parse message and create Error instance
+              pendingPromiseResolver.reject(new ZeroNetError('zeroframe error', message));
+            }
+
+            delete pendingPromiseResolvers[message.to];
+          }
         break;
       case 'wrapperReady':
         _self.send({ cmd: 'innerReady', params: {} });
@@ -121,6 +143,14 @@ module.exports = Marionette.Object.extend({
       }
     });
   },
+  sign: function (filePath) {
+    return _self.send({
+      cmd: 'siteSign',
+      params: {
+        inner_path: filePath
+      }
+    });
+  },
   publish: function (filePath) {
     return _self.send({
       cmd: 'sitePublish',
@@ -144,4 +174,21 @@ module.exports = Marionette.Object.extend({
     
     return _self.send(options);
   },
+  shouldResolve: function shouldResolve(cmd, response) {
+    try {
+      switch (cmd) {
+        case 'certAdd': 
+          return (response.result === 'ok' || response.result === 'Not changed');
+        case 'fileWrite':
+        case 'siteSign':
+        case 'sitePublish':
+          return (response.result === 'ok' || response === 'ok');
+        default:
+          return true;
+      }
+    } catch (e) {
+      console.log('error determining whether or not to resolve a zeronet promise', cmd, response, e);
+      return false;
+    }
+  }
 });

@@ -1,6 +1,5 @@
 var gulp            = require('gulp'),
     fs              = require('fs'),
-    sass            = require('gulp-sass'),
     browserSync     = require('browser-sync').create(),
     del             = require('del'),
     gulpIf          = require('gulp-if'),
@@ -30,8 +29,11 @@ var config = {
     hbs: 'src/js/**/*.hbs',
     html: 'src/*.html',
     js: 'src/js/**/*.js',
+    less: 'src/css/**/*.less',
     main: 'src/js/main.js',
-    sass: 'src/scss/**/*.scss'
+    zeronet: {
+      settings: 'src/**/content.json'
+    }
   },
   staging: {
     css: 'src/css',
@@ -44,12 +46,17 @@ var config = {
     entry: 'spec/entry.js',
     specs: 'spec/**/*.js'
   },
-  destination: {
+  distribution: {
+    all: 'dist/**',
     baseDir: 'dist',
     css: 'dist/css',
     fonts: 'dist/fonts',
     images: 'dist/images',
     js: 'dist/js'
+  },
+  development: {
+    source: 'dist/**',
+    baseDir: 'data/1Gyhw9AfTojuc42h6nHmV9QCgroTXG9WRt'
   }
 },
     bundledJSFile = config.staging.js + '/' + config.name + '.js',
@@ -64,25 +71,17 @@ gulp.task('cache:clear', function (callback) {
 });
 
 gulp.task('clean:dist', function () {
-  return del.sync([bundledJSFile, bundledMiniJSFile, 'src/js/**/*.chbs.js', 'dist/**/*', '!dist/images', '!dist/images/**/*']);
+  return del.sync(['dist/**/*', '!dist/images', '!dist/images/**/*']);
 });
 
 gulp.task('clean:tests', function () {
   return del.sync(config.tests.entry);
 });
 
-gulp.task('sass', function () {
-  return gulp.src(config.source.sass)
-  .pipe(sass()) // Using gulp-sass
-  .pipe(gulp.dest(config.staging.css))
-  .pipe(browserSync.reload({
-    stream: true
-  }));
-});
-
 gulp.task('fonts', function () {
+  // requires semantic to run first
   return gulp.src(config.source.fonts)
-  .pipe(gulp.dest(config.destination.fonts));
+  .pipe(gulp.dest(config.distribution.fonts));
 });
 
 gulp.task('images', function () {
@@ -91,26 +90,31 @@ gulp.task('images', function () {
     .pipe(cache(imagemin({
       interlaced: true
     })))
-  .pipe(gulp.dest(config.destination.images))
+  .pipe(gulp.dest(config.distribution.images))
 });
 
 gulp.task('css', function () {
   return gulp.src(config.source.css)
-  .pipe(gulp.dest(config.destination.css));
+  .pipe(gulp.dest(config.distribution.css));
+});
+
+gulp.task('zeronet', function () {
+  return gulp.src(config.source.zeronet.settings)
+  .pipe(gulp.dest(config.distribution.baseDir));
 });
 
 gulp.task('semantic', function () {
   gulp.src('semantic/dist/semantic.css')
   .pipe(gulp.dest(config.staging.css))
-  .pipe(gulp.dest(config.destination.css));
+  .pipe(gulp.dest(config.distribution.css));
 
   gulp.src('semantic/dist/themes/default/**')
   .pipe(gulp.dest(config.staging.css + '/themes/default'))
-  .pipe(gulp.dest(config.destination.css + '/themes/default'));
+  .pipe(gulp.dest(config.distribution.css + '/themes/default'));
 
   gulp.src('semantic/dist/semantic.js')
   .pipe(gulp.dest(config.staging.js))
-  .pipe(gulp.dest(config.destination.js));
+  .pipe(gulp.dest(config.distribution.js));
 });
 
 gulp.task('bundle:javascript', ['handlebars'], function () {
@@ -121,7 +125,7 @@ gulp.task('bundle:javascript', ['handlebars'], function () {
   .pipe(minify())
   .pipe(size())
   .pipe(gulp.dest(config.staging.js))
-  .pipe(gulp.dest(config.destination.js));
+  .pipe(gulp.dest(config.distribution.js));
 });
 
 gulp.task('bundle:tests', function () {
@@ -145,13 +149,14 @@ gulp.task('handlebars', function () {
 
 gulp.task('html', function () {
   return gulp.src(config.source.html)
-  .pipe(gulp.dest(config.destination.baseDir));
+  .pipe(gulp.dest(config.distribution.baseDir));
 });
+
+gulp.task('less', function () {});
 
 gulp.task('watch', ['browserSync'], function () {
 
   console.log('watching: ' + bundledJSFile);
-  gulp.watch(config.source.sass, ['sass']);
   gulp.watch(config.source.html, browserSync.reload);
   // only watch the bundled js file
   gulp.watch(bundledJSFile, browserSync.reload);
@@ -171,8 +176,8 @@ gulp.task('browserSync', function () {
 
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
-    'sass',
-    ['css', 'semantic', 'images', 'fonts', 'bundle:javascript', 'html'],
+    'less',
+    ['css', 'semantic', 'images', 'fonts', 'bundle:javascript', 'html', 'zeronet'],
     ['cache:clear'],
     callback)
 });
@@ -211,3 +216,9 @@ gulp.task('test:browser', function () {
       .pipe(jasmineBrowser.server());
     });
 });
+
+gulp.task('deploy:development', function () {
+  return gulp.src(config.development.source)
+  .pipe(gulp.dest(config.development.baseDir));
+});
+

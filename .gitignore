@@ -49,3 +49,5 @@ semantic/
 spec/entry.js
 src/**/semantic.*
 src/css/themes/
+data
+.development

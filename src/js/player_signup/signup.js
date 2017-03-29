@@ -56,7 +56,6 @@ module.exports = SubComponent.extend({
     'user:create': 'createUser',
     'set:email': 'setEmail',
     'btc:copy:public': 'copyPublicBTC',
-    'btc:copy:private': 'copyPrivateBTC'
   },
   radioRequests: {
     'validate:bitmessage': 'validateBitMessageAddress',
@@ -125,13 +124,16 @@ module.exports = SubComponent.extend({
     // 2. sign user address, plus cert type, plus user address (again) in base64
     //    using site's user content address private key
     var textToSign = _self.model.get('btcAddress') + '#web/' + _self.model.get('btcAddress'),
-        cert = currency.btcSignMessage(_self.contentAddress, textToSign).toString('base64');
+        cert = currency
+          .btcSignMessage(_self.contentAddress, textToSign)
+          .toDER()
+          .toString('base64');
 
-        return zeronet.addCertificate(cert);
-      })
+    return zeronet.addCertificate(cert)
       .then(function (response) {
         // 3. write the model to the file system
-        return zeronet.writeFile(filePath, _self.model.toJSON().toString('base64'));
+        var fileContent = btoa(JSON.stringify(_self.model.toJSON()));
+        return zeronet.writeFile(filePath, fileContent);
       })
       .then(function (response) {
         return zeronet.publish(filePath);
