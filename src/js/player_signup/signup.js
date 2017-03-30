@@ -132,7 +132,7 @@ module.exports = SubComponent.extend({
     return zeronet.addCertificate(cert)
       .then(function (response) {
         // 3. write the model to the file system
-        var fileContent = btoa(JSON.stringify(_self.model.toJSON()));
+        var fileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
         return zeronet.writeFile(filePath, fileContent);
       })
       .then(function (response) {
@@ -146,19 +146,19 @@ module.exports = SubComponent.extend({
     // when coming from the view, 'address' has a value
     // when coming from an update to 'pgpPublicKeyArmored', address will be undefined
     // but _clearTextEmail should have a value
-    _clearTextEmail = address || _clearTextEmail;
+    _clearTextEmail = address.val() || _clearTextEmail;
 
     if (_clearTextEmail) {
       if (pgp && _self.model.has('pgpPublicKeyArmored')) {
         var options = {
           data: _clearTextEmail,
-          publicKeys: [pgp.readArmored(inigo.getPublickKey()).keys, pgp.readArmored(_self.model.get('pgpPublicKeyArmored')).keys]
+          publicKeys: pgp.readArmored(inigo.getPublickKey()).keys.concat(pgp.readArmored(_self.model.get('pgpPublicKeyArmored')).keys)
         };
 
         pgp
           .encrypt(options)
-          .then(function (cyphertext) {
-            _self.model.set('emailAddress');
+          .then(function (ciphertext) {
+            _self.model.set('emailAddress', ciphertext.data);
           });
         
       } else {

@@ -42,6 +42,17 @@ module.exports = Marionette.Object.extend({
       return false
     }
     
-    return result.err === undefined || result.err.length == 0;
+    return result.err === undefined || result.err.length === 0;
+  },
+  encrypt: function (options) {
+    console.log('[pgp] enter encrypt');
+    promise = pgp.encrypt(options)
+
+    promise
+      .then(function (ciphertext) {
+        _self.getChannel().trigger('encrypt', ciphertext);
+      });
+
+    return promise;
   }
 });
