@@ -1,24 +1,24 @@
 {
-  "address": "1Gyhw9AfTojuc42h6nHmV9QCgroTXG9WRt",
-  "files": {},
-  "ignore": ".*",
-  "inner_path": "data/users/content.json",
-  "modified": 1457432700.86839,
-  "user_contents": {
-    "cert_signers": {
-      "contrechess.io": [
-        "199prLGiwmXEYQBmV9wT7zRELap8s1Zoeh"
-      ]
-    },
-    "permission_rules": {
-      ".*": {
-        "files_allowed": "(avatar.png|data.json|user.json|move.json|chat.json|solicitation.json)",
-        "max_size": 20000
-      }
-    },
-    "permissions": {}
+ "address": "1Gyhw9AfTojuc42h6nHmV9QCgroTXG9WRt",
+ "files": {},
+ "ignore": ".*",
+ "inner_path": "data/users/content.json",
+ "modified": 1490878062,
+ "signs": {
+  "1Gyhw9AfTojuc42h6nHmV9QCgroTXG9WRt": "HMFHg6HC/XMDaEEBvWPEz7sZgvMHkvxAAUumHkI+QfAwJwZilVD1GlrVzpr590ylemzlVppb+23xd2wvzTGIvVU="
+ },
+ "user_contents": {
+  "cert_signers": {
+   "contrechess.io": [
+    "199prLGiwmXEYQBmV9wT7zRELap8s1Zoeh"
+   ]
   },
-  "signs": {
-    "1Gyhw9AfTojuc42h6nHmV9QCgroTXG9WRt": "MEUCIQCLlBVe9YvJapDlzgJmYFlNrzrUYzYo/y5t0sy4bekhhQIgJ+vuytAM9xVhoNz9HajmOFbo9OeecFz4eNfRY6aIjgg="
-  }
+  "permission_rules": {
+   ".*": {
+    "files_allowed": "(avatar.png|data.json|user.json|move.json|chat.json|solicitation.json)",
+    "max_size": 2000000
+   }
+  },
+  "permissions": {}
+ }
 }
