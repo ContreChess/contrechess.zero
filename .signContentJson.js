@@ -11,11 +11,6 @@ program
   .option('-k, --private-key [value]', 'private key')
   .parse(process.argv);
 
-console.log(' args: %j', program.args);
-
-console.log(' file: %', program.file);
-console.log(typeof program.file);
-
 var userContentSettings = require('./' + program.file),
     privateKey = program.privateKey,
     signs = {},
