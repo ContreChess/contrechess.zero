@@ -1,5 +1,7 @@
 var Marionette    = require('backbone.marionette'),
     $             = require('jquery'),
+    popup         = require('../../../../semantic/dist/components/popup'),
+    transition    = require('../../../../semantic/dist/components/transition'),
     Radio         = require('backbone.radio'),
     Model         = require('../models/user'),
     tmpl          = require('../templates/signup.chbs'),
@@ -105,14 +107,15 @@ module.exports = Marionette.View.extend({
     var copyPublicBTC = this.getUI('copyPublicBTC'),
         buttons = copyPublicBTC;
 
-    if ($.fn.popup) {
+    if (jQuery.fn.popup) {
+      var popups =
       buttons.popup({
         on: 'click',
         content: 'Copied!',
-        onShow: function () {
+        onVisible: function () {
           var _selector  = this;
           setTimeout(function () {
-            _selector.popup('hide');
+            _selector.popup('hide all');
           }, 2000);
         }
       });

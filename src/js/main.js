@@ -2,7 +2,7 @@
 
   var App     = require('./app'),
       Root    = require('./root/index'),
-      Signup  = require('./player_signup/signup');
+      Signup  = require('./signup/signup');
 
   var app = new App();
 
