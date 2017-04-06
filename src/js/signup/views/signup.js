@@ -2,6 +2,7 @@ var Marionette    = require('backbone.marionette'),
     $             = require('jquery'),
     popup         = require('../../../../semantic/dist/components/popup'),
     transition    = require('../../../../semantic/dist/components/transition'),
+    semanticForm  = require('../../../../semantic/dist/components/form'),
     Radio         = require('backbone.radio'),
     Model         = require('../models/user'),
     tmpl          = require('../templates/signup.chbs'),
@@ -105,7 +106,8 @@ module.exports = Marionette.View.extend({
   },
   onRender: function (view) {
     var copyPublicBTC = this.getUI('copyPublicBTC'),
-        buttons = copyPublicBTC;
+        buttons = copyPublicBTC,
+        form = this.getUI('form');
 
     if (jQuery.fn.popup) {
       var popups =
@@ -117,6 +119,23 @@ module.exports = Marionette.View.extend({
           setTimeout(function () {
             _selector.popup('hide all');
           }, 2000);
+        }
+      });
+    }
+
+    if (jQuery.fn.form) {
+      var forms =
+      form.form({
+        fields: {
+          name: {
+            identifier: 'name',
+            rules: [
+              {
+                type: 'empty',
+                prompt: 'Please enter your name'
+              }
+            ]
+          }
         }
       });
     }
