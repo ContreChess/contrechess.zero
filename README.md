@@ -91,3 +91,30 @@ Directories
             amount
             solicitor
             solicitee
+
+# Development
+=============
+
+This project uses [Gulp](http://gulpjs.com/). Some tasks assume a symbolic link exists between ZeroNet's `data` directory and this project's root directory:
+
+```
+drwxr-xr-x    4 <user>  <group>    136 Apr  4 09:54 ..
+-rw-r--r--    1 <user>  <group>   1973 Apr  3 11:54 .development.asc
+drwxr-xr-x   16 <user>  <group>    544 Apr  7 10:23 .git
+-rw-r--r--    1 <user>  <group>     79 Mar  7 06:42 .gitattributes
+-rw-r--r--    1 <user>  <group>    737 Apr  3 11:54 .gitignore
+-rw-r--r--    1 <user>  <group>     16 Mar  7 06:42 .npmrc
+-rw-r--r--    1 <user>  <group>   1332 Mar 26 00:25 Dockerfile
+-rw-r--r--    1 <user>  <group>  18046 Mar  7 06:42 LICENSE
+-rw-r--r--    1 <user>  <group>   2564 Mar 27 05:02 README.md
+lrwxr-xr-x    1 <user>  <group>     27 Apr  7 10:24 data -> ../../zeronet/ZeroNet/data/
+drwxr-xr-x    7 <user>  <group>    238 Apr  3 15:17 dist
+-rw-r--r--    1 <user>  <group>   6175 Apr  3 11:54 gulpfile.js
+drwxr-xr-x  917 <user>  <group>  31178 Apr  3 11:55 node_modules
+-rw-r--r--    1 <user>  <group>   1938 Apr  3 11:54 package.json
+-rw-r--r--    1 <user>  <group>    469 Mar 15 09:51 semantic.json
+drwxr-xr-x   10 <user>  <group>    340 Mar 23 14:34 spec
+drwxr-xr-x    7 <user>  <group>    238 Apr  3 14:48 src
+```
+
+
