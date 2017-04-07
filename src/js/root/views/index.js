@@ -2,7 +2,7 @@ var Marionette          = require('backbone.marionette'),
     NavigationView      = require('./navigation.js'),
     FooterView      = require('./footer.js'),
     Model               = require('../models/display'),
-    tmpl                = require('../templates/index.chbs'),
+     tmpl                = require('../templates/index.chbs'),
     _self;
 
 module.exports = Marionette.View.extend({
@@ -21,6 +21,7 @@ module.exports = Marionette.View.extend({
   },
   regions: {
     navigation: '.navigation',
+    container: 'main > .game.container',
     main: 'main',
     footer: '.footer',
   },
