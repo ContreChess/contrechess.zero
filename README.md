@@ -25,7 +25,6 @@ I might also want to use `gulp-cssnano` to do the same thing for css
 
 
 # Contre
-======
 
 1. Every user is listed in the main window
   a. Except for the current user
@@ -93,7 +92,6 @@ Directories
             solicitee
 
 # Development
-=============
 
 This project uses [Gulp](http://gulpjs.com/). Some tasks assume a symbolic link exists between ZeroNet's `data` directory and this project's root directory:
 
