@@ -67,29 +67,30 @@ I might also want to use `gulp-cssnano` to do the same thing for css
 Directories
 - site (main) 10MB
   - data/
-  |- users/
-  |  |- <address>
-  |  |  |- content.json
-  |  |  |- user.json
-  |  |  |- avatar.png
+    - users/
+      - <address>
+        - content.json
+        - user.json
+        - avatar.png
+
 - site (games) 10MB
   - data/
-  |- games
-  |  |- <multi-sig address>
-  |  |  |- content.json [multi-signers or my instgance writes to these files?]
-  |  |  |- payment.json
-  |  |  |- moves.json (chess.js)
-  |  |  |- chat/
-  |  |  |  | - epochTime.address.json/
+    - games
+      - <multi-sig-address>
+        - content.json [multi-signers or my instgance writes to these files?]
+        - payment.json
+        - moves.json (chess.js)
+      - chat/
+        - epochTime.address.json/
 
 - site (solicitations) 10MB need a policy to delete these periodically
   - data/
-  |  |- <guid> (acceptance deletes offer, creates game, counter deletes offer, creates new offer)
-  |  |  |- offer.json
-            currency
-            amount
-            solicitor
-            solicitee
+    - <guid> (acceptance deletes offer, creates game, counter deletes offer, creates new offer)
+      - offer.json
+      currency
+      amount
+      solicitor
+      solicitee
 
 # Development
 
