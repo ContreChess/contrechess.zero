@@ -16,9 +16,5 @@
     componentClass: Signup
   });
 
-  app.addComponent('discovery', {
-    componentClass: Discovery
-  });
-
   app.start();
 

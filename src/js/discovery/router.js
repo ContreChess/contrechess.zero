@@ -2,7 +2,7 @@
 
   module.exports = Marionette.AppRouter.extend({
     appRoutes: {
-      'play': 'play'
+      'discover': 'discover'
     }
   });
 
