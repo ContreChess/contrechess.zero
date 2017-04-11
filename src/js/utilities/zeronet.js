@@ -117,14 +117,14 @@ module.exports = Marionette.Object.extend({
 
     return promise;
   },
-  addCertificate: function (certificate) {
+  addCertificate: function (certificate, userName) {
     if (siteInfoModel && siteInfoModel.has('auth_address')) {
       return _self.send({
         cmd: 'certAdd',
         params: {
           domain: 'contrechess.io',
           auth_type: 'web',
-          auth_user_name: siteInfoModel.get('auth_address'),
+          auth_user_name: userName || siteInfoModel.get('auth_address'),
           cert: certificate
         }
       });
@@ -133,6 +133,19 @@ module.exports = Marionette.Object.extend({
         reject(new Error("'siteInfo' unknown. Run 'getSiteInfo' before attempting to add a certificate"));
       });
     }
+  },
+  selectCertificate: function (domains) {
+    
+    if (typeof domains === "string") {
+      domains = [domains];
+    }
+
+    return _self.send({
+      cmd: 'certSelect',
+      params: {
+        accepted_domains: domains
+      }
+    });
   },
   writeFile: function (filePath, content) {
     return _self.send({

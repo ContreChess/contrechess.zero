@@ -123,13 +123,16 @@ module.exports = SubComponent.extend({
 
     // 2. sign user address, plus cert type, plus user address (again) in base64
     //    using site's user content address private key
-    var textToSign = _self.model.get('btcAddress') + '#web/' + _self.model.get('btcAddress'),
+    var textToSign = _self.model.get('btcAddress') + '#web/' + _self.model.get('userName'),
         cert = currency
           .btcSignMessage(_self.contentAddress, textToSign)
           .toDER()
           .toString('base64');
 
-    return zeronet.addCertificate(cert)
+    return zeronet.addCertificate(cert, _self.model.get('userName'))
+      .then(function () {
+        return zeronet.selectCertificate('contrechess.io');
+      })
       .then(function (response) {
         // 3. write the model to the file system
         var fileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
@@ -139,6 +142,7 @@ module.exports = SubComponent.extend({
         return zeronet.publish(filePath);
       })
       .then(function (response) {
+        console.log(response);
         // 4. handle errors or process notifications
       });
   },
