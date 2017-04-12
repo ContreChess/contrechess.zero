@@ -130,9 +130,6 @@ module.exports = SubComponent.extend({
           .toString('base64');
 
     return zeronet.addCertificate(cert, _self.model.get('userName'))
-      .then(function () {
-        return zeronet.selectCertificate('contrechess.io');
-      })
       .then(function (response) {
         // 3. write the model to the file system
         var fileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
