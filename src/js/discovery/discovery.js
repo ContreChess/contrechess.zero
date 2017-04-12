@@ -1,6 +1,6 @@
-var SubComponent  = require('../_base/subcomponent'),
-    Player        = require('./models/player'),
-    View        = require('./views/player_listing'),
+var SubComponent    = require('../_base/subcomponent'),
+    Player          = require('./models/player'),
+    CollectionView  = require('./views/discover_all'),
     Router      = require('./router'),
     _self;
 
@@ -10,7 +10,7 @@ module.exports = SubComponent.extend({
     _self = this;
 
     this.router = new Router({ controller: this });
-    this.view = new View();
+    this.view = new CollectionView();
 
     if (options && options.zeroNetManager) {
       zeronet = options.zeroNetManager;
@@ -18,21 +18,19 @@ module.exports = SubComponent.extend({
       zeronet = appChannel.request('service:get', { name: 'zeronet', serviceClass: ZeroNetManager });
     }
   },
-  render: function () {
-    this.view = new View({ model: this.model });
-    this.container.show(this.view);
-  },
-  play: function () {
-    console.log('let\'s play!');
+  discover: function () {
+    console.log('who wants to play?!');
 
-      // instead of calling the app to replace the entire view,
+      // TODO: instead of calling the app to replace the entire view,
       // simply replace a container in the root view (index)
-    /*
     _self
       .getParentComponent()
       .showView(_self.getView());
-    */
-    _self.getChannel().trigger('navigate');
+
+    zeronet
+      .fileQuery('data/users/*/user.json')
+      .then(function (userfiles) {
+      });
   }
 });
 
