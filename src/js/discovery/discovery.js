@@ -1,5 +1,6 @@
 var SubComponent    = require('../_base/subcomponent'),
     Player          = require('./models/player'),
+    View            = require('./views/sample'),
     CollectionView  = require('./views/discover_all'),
     Router      = require('./router'),
     _self;
