@@ -187,6 +187,15 @@ module.exports = Marionette.Object.extend({
     
     return _self.send(options);
   },
+  fileQuery: function (filePath , query) {
+    return _self.send({
+      cmd: 'fileQuery',
+      params: {
+        dir_inner_path: filePath,
+        query: query
+      }
+    });
+  },
   shouldResolve: function shouldResolve(cmd, response) {
     try {
       switch (cmd) {
