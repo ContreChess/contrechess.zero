@@ -10,10 +10,21 @@ var Marionette  = require('backbone.marionette'),
     initialize: function (options) {
       _self = this;
     },
+    template: function () {
+      return _self.model ?
+        tmpl(_self.model.toJSON()):
+        tmpl();
+    },
+    ui: {
+      playerAccordian: '.player.ui.accordian'
+    },
     onRender: function (view) {
-      // TODO: get accordions via 'getUI'
+      var playerAccordian = this.getUI('playerAccordian');
       
       if (jQuery.fn.accordion) {
+        var accordions =
+            playerAccordian
+            .accordion();
       }
     }
   });

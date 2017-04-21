@@ -2,7 +2,9 @@ var SubComponent    = require('../_base/subcomponent'),
     Radio           = require('backbone.radio'),
     Player          = require('./models/player'),
     View            = require('./views/sample'),
+    ZeroNetManager  = require('../utilities/zeronet'),
     CollectionView  = require('./views/discover_all'),
+    appChannel      = Radio.channel('app'),
     Router      = require('./router'),
     _self;
 
@@ -12,7 +14,7 @@ module.exports = SubComponent.extend({
     _self = this;
 
     this.router = new Router({ controller: this });
-    this.view = new CollectionView();
+    this.view = new View();
 
     if (options && options.zeroNetManager) {
       zeronet = options.zeroNetManager;

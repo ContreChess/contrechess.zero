@@ -28,32 +28,14 @@ module.exports = Marionette.Object.extend({
         reject(new Error('[src/js/utilities/zeronet] no message supplied'));
       }
 
+      target.postMessage(message, '*');
 
-    target.postMessage(message, '*');
-
-    pendingPromiseResolvers[message.id] = {
-      cmd: message.cmd,
-      resolve: resolve,
-      reject: reject
-    };
-      /*var waitCounter = 30;
-      setTimeout(function waitOnZeroNet() {
-        var zeroNetMessage = pendingZeroNetMessages[message.id];
-
-        if (zeroNetMessage) {
-          delete pendingZeroNetMessages[message.id];
-          // TODO: resolve/reject based on ZeroFrame specific response data 
-          resolve(zeroNetMessage.result);
-        } else {
-          if (waitCounter) {
-            setTimeout(waitOnZeroNet, 1000);
-            waitCounter--;
-          } else {
-            reject(new Error('[src/js/utilities/zeronet] exceeded timeout for message, id: ' + message.id));
-          }
-        }
-      }, 500);
-      */
+      pendingPromiseResolvers[message.id] = {
+        cmd: message.cmd,
+        resolve: resolve,
+        reject: reject
+      };
+      
     });
 
     
@@ -192,7 +174,7 @@ module.exports = Marionette.Object.extend({
       cmd: 'fileQuery',
       params: {
         dir_inner_path: filePath,
-        query: query
+        query: query 
       }
     });
   },

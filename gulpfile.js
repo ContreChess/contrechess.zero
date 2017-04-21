@@ -33,6 +33,9 @@ var config = {
     main: 'src/js/main.js',
     zeronet: {
       settings: 'src/**/content.json'
+    },
+    handlebars: {
+      compiled: 'src/js/**/*.chbs.js'
     }
   },
   staging: {
@@ -76,6 +79,10 @@ gulp.task('clean:dist', function () {
 
 gulp.task('clean:tests', function () {
   return del.sync(config.tests.entry);
+});
+
+gulp.task('clean:handlebars', function () {
+  return del.sync(config.source.handlebars.compiled);
 });
 
 gulp.task('fonts', function () {
