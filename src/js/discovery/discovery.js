@@ -13,8 +13,8 @@ module.exports = SubComponent.extend({
   initialize: function (options) {
     _self = this;
 
-    this.router = new Router({ controller: this });
-    this.view = new View();
+    _self.router = new Router({ controller: _self });
+    _self.view = new View();
 
     if (options && options.zeroNetManager) {
       zeronet = options.zeroNetManager;
