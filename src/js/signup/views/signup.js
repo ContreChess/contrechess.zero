@@ -30,6 +30,7 @@ module.exports = Marionette.View.extend({
     return tmpl(_self.model.toJSON());
   },
   ui: {
+    avatar: 'img.signup.image',
     bitmessageAddress: 'input[type=text][name=bitmessage-address]',
     copyPublicBTC: 'button.copy.public.btc.key',
     createKey: 'button.create.key',
