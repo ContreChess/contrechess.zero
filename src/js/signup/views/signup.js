@@ -48,17 +48,16 @@ module.exports = Marionette.View.extend({
     submit: 'button.submit.button',
   },
   triggers: {
-    'click @ui.createKey': 'pgp:create',
-    'submit @ui.form': 'form:submit',
-    'change @ui.name': 'name:changed',
-    'input @ui.name': 'name:changing',
-    'change @ui.pgpPublicKeyArmored': 'pgp:publicKey:armored:changed', 
-    'change @ui.emailAddress': 'email:address:changed',
     'change @ui.bitmessageAddress': 'bitmessage:address:changed',
+    'change @ui.emailAddress': 'email:address:changed',
+    'change @ui.name': 'name:changed',
     'change @ui.passphrase': 'passphrase:changed',
+    'change @ui.pgpPublicKeyArmored': 'pgp:publicKey:armored:changed', 
     'click @ui.copyPublicBTC': 'copy:btc:public',
+    'click @ui.createKey': 'pgp:create',
     'click @ui.showPgpGeneration' : 'show:pgp:generation'
-  },
+    'input @ui.name': 'name:changing',
+    'submit @ui.form': 'form:submit',  },
   modelEvents: {
     'change:pgpPublicKeyArmored': function (model, value) {
       this.getUI('pgpPublicKeyArmored').val(value);
