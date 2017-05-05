@@ -1,5 +1,6 @@
 var Marionette    = require('backbone.marionette'),
     $             = require('jquery'),
+    _             = require('underscore'),
     popup         = require('../../../../semantic/dist/components/popup'),
     transition    = require('../../../../semantic/dist/components/transition'),
     semanticForm  = require('../../../../semantic/dist/components/form'),
@@ -25,6 +26,7 @@ module.exports = Marionette.View.extend({
     this.listenTo(signupChannel, 'fail:user:create', this.onUserCreateFailure);
 
     this.listenTo(signupChannel, 'success:btc:get', this.onBtcGetSuccess);
+    this.listenTo(signupChannel, 'success:avatar:load', this.onAvatarLoadSuccess);
   },
   template: function () {
     return tmpl(_self.model.toJSON());
@@ -55,9 +57,13 @@ module.exports = Marionette.View.extend({
     'change @ui.pgpPublicKeyArmored': 'pgp:publicKey:armored:changed', 
     'click @ui.copyPublicBTC': 'copy:btc:public',
     'click @ui.createKey': 'pgp:create',
-    'click @ui.showPgpGeneration' : 'show:pgp:generation'
+    'click @ui.showPgpGeneration' : 'show:pgp:generation',
+    'dragover body': 'drag:over:body',
+    'dragleave body': 'drag:leave:body',
+    'drop body': 'drag:drop:body',
     'input @ui.name': 'name:changing',
-    'submit @ui.form': 'form:submit',  },
+    'submit @ui.form': 'form:submit'
+  },
   modelEvents: {
     'change:pgpPublicKeyArmored': function (model, value) {
       this.getUI('pgpPublicKeyArmored').val(value);
@@ -153,6 +159,11 @@ module.exports = Marionette.View.extend({
     qrPublicBTC.attr('src', qrPublic.toDataURL());
     rightRail.removeClass('hidden');
   },
+  onAvatarLoadSuccess: function (dataURL) {
+    _self
+      .getUI('avatar')
+      .attr('src', dataURL);
+  },
   onNameChanged: function () {
     this.model.set('userName', _self.getUI('name').val());
   },
@@ -200,6 +211,31 @@ module.exports = Marionette.View.extend({
         passphraseRequiredMessage = _self.getUI('passphraseRequiredMessage');
     if (passphrase.val()) {
       passphraseRequiredMessage.removeClass('error');
+    }
+  },
+  onDragOverBody: function (event) {
+    _self
+      .getUI('avatar')
+      .addClass('droppable');
+    return false;
+  },
+  onDragLeaveBody: function (event) {
+    var avatar = _self.getUI('avatar');
+
+    _.debounce(function() {
+      avatar.removeClass('droppable');
+    }, 200);
+  },
+  onDragDropBody: function (event) {
+    var avatar = _self.getUI('avatar'),
+        file = _.first(event.target.files);
+
+    event.preventDefault();
+
+    avatar.removeClass('droppable');
+    
+    if (typeof file !== undefined && file.type.match('image.*')) {
+     signupChannel.trigger('add:avatar', file);
     }
   }
 });
