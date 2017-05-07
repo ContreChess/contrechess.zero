@@ -191,20 +191,17 @@ module.exports = SubComponent.extend({
     return validEmail.test(value);
   },
   addAvatar: function (file) {
+    console.log('adding file from signup controller');
     var reader = new FileReader();
 
     reader.onload = function () {
-      var processor = new FileReader();
+      _self.getChannel().trigger('success:avatar:load', reader.result);
 
-      processor.onload = function () {
-        _self.getChannel().trigger('success:avatar:load', processor.result);
-      };
+      var fileContent = reader.result.replace(/.*,/, ""),
+          fileExtension = file.name.substr(file.name.lastIndexOf('.')),
+          filePath = 'data/users/' + _self.model.get('btcAddress') + '/avatar' + fileExtension;
 
-      processor.readAsDataURL(reader.result);
-
-      var fileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
-        return zeronet.writeFile(filePath, fileContent);
-
+      return zeronet.writeFile(filePath, fileContent);
     };
 
     reader.onabort = function () {
@@ -214,7 +211,7 @@ module.exports = SubComponent.extend({
       _self.getChannel().trigger('failure:avatar:load');
     };
 
-    reader.readAsArrayBuffer();
+    reader.readAsDataURL(file);
   }
 });
  

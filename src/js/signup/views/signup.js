@@ -58,9 +58,9 @@ module.exports = Marionette.View.extend({
     'click @ui.copyPublicBTC': 'copy:btc:public',
     'click @ui.createKey': 'pgp:create',
     'click @ui.showPgpGeneration' : 'show:pgp:generation',
-    'dragover body': 'drag:over:body',
-    'dragleave body': 'drag:leave:body',
-    'drop body': 'drag:drop:body',
+    'dragenter @ui.avatar': 'drag:enter:avatar',
+    'dragover @ui.avatar': 'drag:over:avatar',
+    'dragleave @ui.avatar': 'drag:leave:avatar',
     'input @ui.name': 'name:changing',
     'submit @ui.form': 'form:submit'
   },
@@ -113,7 +113,8 @@ module.exports = Marionette.View.extend({
   onRender: function (view) {
     var copyPublicBTC = this.getUI('copyPublicBTC'),
         buttons = copyPublicBTC,
-        form = this.getUI('form');
+        form = this.getUI('form'),
+        avatar = this.getUI('avatar');
 
     if (jQuery.fn.popup) {
       var popups =
@@ -145,6 +146,19 @@ module.exports = Marionette.View.extend({
         }
       });
     }
+
+    _.first(avatar).addEventListener('drop', function (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      var avatar = _self.getUI('avatar'),
+          file = _.first(event.dataTransfer.files);
+      avatar.removeClass('droppable');
+    
+      if (file && file.type && file.type.match('image.*')) {
+       signupChannel.trigger('add:avatar', file);
+      }
+      return false;
+    }, false);
   },
   onUserCreateSuccess: function () {
   },
@@ -160,6 +174,7 @@ module.exports = Marionette.View.extend({
     rightRail.removeClass('hidden');
   },
   onAvatarLoadSuccess: function (dataURL) {
+    console.log('avatar loaded in signup view');
     _self
       .getUI('avatar')
       .attr('src', dataURL);
@@ -213,29 +228,20 @@ module.exports = Marionette.View.extend({
       passphraseRequiredMessage.removeClass('error');
     }
   },
-  onDragOverBody: function (event) {
+  onDragEnterAvatar: function (event) {
+    return false;
+  },
+  onDragOverAvatar: function (event) {
     _self
       .getUI('avatar')
       .addClass('droppable');
     return false;
   },
-  onDragLeaveBody: function (event) {
+  onDragLeaveAvatar: function (event) {
     var avatar = _self.getUI('avatar');
 
     _.debounce(function() {
       avatar.removeClass('droppable');
     }, 200);
-  },
-  onDragDropBody: function (event) {
-    var avatar = _self.getUI('avatar'),
-        file = _.first(event.target.files);
-
-    event.preventDefault();
-
-    avatar.removeClass('droppable');
-    
-    if (typeof file !== undefined && file.type.match('image.*')) {
-     signupChannel.trigger('add:avatar', file);
-    }
   }
 });
