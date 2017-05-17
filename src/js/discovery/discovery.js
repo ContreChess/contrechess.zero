@@ -1,11 +1,11 @@
 var SubComponent    = require('../_base/subcomponent'),
     Radio           = require('backbone.radio'),
     Player          = require('./models/player'),
-    View            = require('./views/sample'),
     ZeroNetManager  = require('../utilities/zeronet'),
-    CollectionView  = require('./views/discover_all'),
+    View            = require('./views/discover'),
     appChannel      = Radio.channel('app'),
-    Router      = require('./router'),
+    Router          = require('./router'),
+    zeronet,
     _self;
 
 module.exports = SubComponent.extend({
@@ -34,12 +34,14 @@ module.exports = SubComponent.extend({
     zeronet
       .fileQuery('data/users/*/user.json')
       .then(function (userfiles) {
+        var players = [];
         if (userfiles && Array.isArray(userfiles)) {
           userfiles.forEach(function(userfile, index){
-            console.log(userfile);
+            players.push(new Player(userfile));
           });
         }
       });
+
   }
 });
 

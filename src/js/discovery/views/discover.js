@@ -1,8 +1,8 @@
 var Marionette = require('backbone.marionette'),
-    tmpl       = require('../templates/all.chbs'),
+    tmpl       = require('../templates/discover.chbs'),
     _self;
 
-module.exports = Marionette.CollectionView.extend({
+module.exports = Marionette.View.extend({
   initialize: function (options) {
     _self = this;
   },
@@ -18,3 +18,4 @@ module.exports = Marionette.CollectionView.extend({
     this.trigger('view:player', this.model);
   }
 });
+

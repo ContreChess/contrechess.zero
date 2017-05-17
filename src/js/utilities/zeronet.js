@@ -49,8 +49,6 @@ module.exports = Marionette.Object.extend({
 
     switch (cmd) {
       case 'response':
-          //pendingZeroNetMessages[message.to] = message;
-          //console.log('[src/js/utilities/zeronet] new zeronet message awaiting processing', message);
           var pendingPromiseResolver = pendingPromiseResolvers[message.to]
           if(pendingPromiseResolver) {
             if (_self.shouldResolve(pendingPromiseResolver.cmd, message)) {
