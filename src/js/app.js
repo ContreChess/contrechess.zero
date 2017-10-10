@@ -1,18 +1,23 @@
-var Backbone    = require('backbone'),
-    Marionette  = require('backbone.marionette'),
-    _           = require('underscore');
+import _            from 'underscore';
+import Backbone     from 'backbone';
+import ContainerApp from './_base/container-app';
 
-var app = Marionette.Application.extend({
+const App = ContainerApp.extend({
   channelName: 'app',
+  radioEvents: {
+    'view:show': 'showView'
+  },
   radioRequests: {
     'service:get': 'getService'
   },
   region: '#app',
   addService: function (options) {
-    var serviceOptions = _.omit(options, 'serviceClass'),
+    let serviceOptions = _.omit(options, 'serviceClass'),
         service = new options.serviceClass(serviceOptions);
 
-    return this.services[options.name] = service;
+    this.services[options.name] = service;
+
+    return service;
   },
   getService: function (options) {
     
@@ -23,11 +28,10 @@ var app = Marionette.Application.extend({
     }
   },
   initialize: function () {
-    this.components = {};
     this.services = {};
   },
   onStart: function () {
-    var rootComponent =
+    let rootComponent =
       _.find(Object.values(this.components),
       function (component) {
         return component.options.isRoot;
@@ -39,16 +43,7 @@ var app = Marionette.Application.extend({
 
     this.showView(rootComponent.getView());
     Backbone.history.start();
-  },
-  addComponent: function (name, options) {
-    var componentOptions = _.omit(options, 'componentClass'),
-        component = new options.componentClass(componentOptions);
-
-    if (component.setParentComponent) {
-      component.setParentComponent(this);
-    }
-
-    this.components[name] = component;
   }
 });
-module.exports = app;
+
+export default App;

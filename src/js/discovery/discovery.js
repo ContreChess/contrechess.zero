@@ -1,14 +1,15 @@
-var SubComponent    = require('../_base/subcomponent'),
-    Radio           = require('backbone.radio'),
-    Player          = require('./models/player'),
-    ZeroNetManager  = require('../utilities/zeronet'),
-    View            = require('./views/discover'),
-    appChannel      = Radio.channel('app'),
-    Router          = require('./router'),
+import Backbone       from 'backbone';
+import Radio          from 'backbone.radio';
+import Router         from './router';
+import View           from './views/discover';
+import ZeroNetManager from '../utilities/zeronet';
+import ViewComponent  from '../_base/view-component.js';
+
+let appChannel = Radio.channel('app'),
     zeronet,
     _self;
 
-module.exports = SubComponent.extend({
+const Discovery = ViewComponent.extend({
   channelName: 'discovery',
   initialize: function (options) {
     _self = this;
@@ -19,7 +20,8 @@ module.exports = SubComponent.extend({
     if (options && options.zeroNetManager) {
       zeronet = options.zeroNetManager;
     } else {
-      zeronet = appChannel.request('service:get', { name: 'zeronet', serviceClass: ZeroNetManager });
+      zeronet = appChannel.request('service:get',
+        { name: 'zeronet', serviceClass: ZeroNetManager });
     }
   },
   discover: function () {
@@ -34,10 +36,10 @@ module.exports = SubComponent.extend({
     zeronet
       .fileQuery('data/users/*/user.json')
       .then(function (userfiles) {
-        var players = [];
+        let players = [];
         if (userfiles && Array.isArray(userfiles)) {
           userfiles.forEach(function(userfile, index){
-            players.push(new Player(userfile));
+            players.push(new Backbone.Model(userfile));
           });
         }
       });
@@ -45,3 +47,4 @@ module.exports = SubComponent.extend({
   }
 });
 
+export default Discovery;

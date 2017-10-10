@@ -1,14 +1,12 @@
-var Marionette          = require('backbone.marionette'),
-    Model               = require('../models/display'),
-    IdentityDisplayView = require('./identitydisplayview.js'),
-    tmpl        = require('../templates/navigation.chbs'),
-    _self;
+import Marionette          from 'backbone.marionette';
+import IdentityDisplayView from './identitydisplayview.js';
+import tmpl                from '../templates/navigation.chbs';
+let     _self;
 
-module.exports = Marionette.View.extend({
+const IndexNavigationView = Marionette.View.extend({
   initialize: function () {
     if (!this.model) {
       console.log('no model passed in to root view');
-      this.model = new Model();
     }
 
     this.identityDisplayView = new IdentityDisplayView({model: this.model});
@@ -25,3 +23,5 @@ module.exports = Marionette.View.extend({
     this.showChildView('identityDisplay', this.identityDisplayView);
   }
 });
+
+export default IndexNavigationView;

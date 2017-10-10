@@ -1,5 +1,10 @@
-  var Backbone = require('backbone')
-      window.$ = window.jQuery = require('jquery');
+import Backbone from 'backbone';
+import jQuery from 'jquery';
 
-  Backbone.$ = window.$;
+const Bootstrap = function () {
+  Backbone.$ = window.$ = window.jQuery = jQuery;
+  return Object.hasOwnProperty.call(window, '$');
+};
+
+export default Bootstrap();
 

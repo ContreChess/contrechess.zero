@@ -1,7 +1,7 @@
-var radio = require('backbone.radio');
+import radio from 'backbone.radio';
 
 // Helpful during development to catch unhandled
 // requests and commands
 radio.DEBUG = true;
 
-module.exports = radio;
+default export radio;

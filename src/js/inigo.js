@@ -1,16 +1,18 @@
 /******************************************************************
  * My name is Inigo Montoya, you killed my father, prepare to die *
+ * There's also that nasty brouhaha when you imprisoned my friend,
+ * Westley
  ******************************************************************/
 
-var pgp                             = require('openpgp'),
-    Marionette                      = require('backbone.marionette'),
+import pgp        from 'openpgp';
+import Marionette from 'backbone.marionette';
     // TODO: create a bot and site (in ZeroNet) to perform content certificate signing
     // also use proof-of-work for anti-spam (client-side)
-    _userContentBitcoinSignatureWIF = 'L4qT6HSCfwun9MKcuWbxMiRoy9QwumptiT65Vn9VXzftunKvL2RJ',
-    currency,
+const _userContentBitcoinSignatureWIF = 'L4qT6HSCfwun9MKcuWbxMiRoy9QwumptiT65Vn9VXzftunKvL2RJ';
+let currency,
     _self;
 
-module.exports = Marionette.Object.extend({
+const InigoMontoya = Marionette.Object.extend({
   channelName: 'pgp',
   initialize: function (options) {
     _self = this;
@@ -30,3 +32,5 @@ module.exports = Marionette.Object.extend({
     return _userContentBitcoinSignatureWIF;
   },
 });
+
+export default InigoMontoya;

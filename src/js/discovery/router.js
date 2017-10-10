@@ -1,8 +1,9 @@
-  var Marionette = require('backbone.marionette');
+import Marionette from 'backbone.marionette';
 
-  module.exports = Marionette.AppRouter.extend({
-    appRoutes: {
-      'discover': 'discover'
-    }
-  });
+const DiscoveryRouter = Marionette.AppRouter.extend({
+  appRoutes: {
+    'discover': 'discover'
+  }
+});
 
+export default DiscoveryRouter;

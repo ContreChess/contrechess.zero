@@ -1,8 +1,8 @@
-var Marionette = require('backbone.marionette'),
-    tmpl       = require('../templates/discover.chbs'),
-    _self;
+import Marionette from 'backbone.marionette';
+import tmpl       from '../templates/discover.chbs';
+let _self;
 
-module.exports = Marionette.View.extend({
+const DiscoveryView = Marionette.View.extend({
   initialize: function (options) {
     _self = this;
   },
@@ -19,3 +19,4 @@ module.exports = Marionette.View.extend({
   }
 });
 
+export default DiscoveryView;

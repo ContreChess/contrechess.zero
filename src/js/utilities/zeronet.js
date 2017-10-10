@@ -1,15 +1,15 @@
-var Marionette      = require('backbone.marionette'),
-    Backbone        = require('backbone'),
-    ZeroNetError    = require('../_base/zeroneterror.js'),
-    nextMessageId   = 1,
-    wrapperNonce    = document.location.href.replace(/.*wrapper_nonce=([A-Zaz0-9]+).*/, '$1'),
+import Marionette   from 'backbone.marionette';
+import Backbone     from 'backbone';
+import ZeroNetError from '../_base/zeroneterror.js';
+const wrapperNonce    = document.location.href.replace(/.*wrapper_nonce=([A-Zaz0-9]+).*/, '$1');
+let nextMessageId   = 1;
     pendingZeroNetMessages = {},
     pendingPromiseResolvers = {},
     siteInfoModel,
     target,
     _self;
 
-module.exports = Marionette.Object.extend({
+const ZeroNetUtilty = Marionette.Object.extend({
   channelName: 'zeronet',
   initialize: function (options) {
     _self = this;
@@ -18,12 +18,12 @@ module.exports = Marionette.Object.extend({
     addEventListener('message', this.onMessageReceived, false);
   },
   send: function (message) {
-    var wrapperNonce = document.location.href.replace(/.*wrapper_nonce=([A-Za-z0-9]+).*/, "$1");
+    let wrapperNonce = document.location.href.replace(/.*wrapper_nonce=([A-Za-z0-9]+).*/, "$1");
 
     message.id = nextMessageId++;
     message.wrapper_nonce = wrapperNonce;
 
-    var promise = new Promise(function (resolve, reject) {
+    let promise = new Promise(function (resolve, reject) {
       if (!message) {
         reject(new Error('[src/js/utilities/zeronet] no message supplied'));
       }
@@ -44,12 +44,12 @@ module.exports = Marionette.Object.extend({
   },
   // message consists of message.id, message.cmd and message.data
   onMessageReceived: function (event) {
-    var message = event.data,
+    let  message = event.data,
         cmd = message.cmd;
 
     switch (cmd) {
       case 'response':
-          var pendingPromiseResolver = pendingPromiseResolvers[message.to]
+          let  pendingPromiseResolver = pendingPromiseResolvers[message.to]
           if(pendingPromiseResolver) {
             if (_self.shouldResolve(pendingPromiseResolver.cmd, message)) {
               pendingPromiseResolver.resolve(message.result || message);
@@ -76,8 +76,7 @@ module.exports = Marionette.Object.extend({
       default:
         console.log('[src/js/utilities/zeronet] unknown request', message);
     }
-
-    _self.getChannel().trigger('receive:message', message);
+_self.getChannel().trigger('receive:message', message);
   },
   onWrapperOpenedWebsocket: function () {
     _self.getChannel().trigger('wrapper:open:websocket');
@@ -86,7 +85,7 @@ module.exports = Marionette.Object.extend({
     _self.getChannel().trigger('wrapper:close:websocket');
   },
   getSiteInfo: function () {
-    var promise = _self.send({ cmd: 'siteInfo', params: {} });
+    let  promise = _self.send({ cmd: 'siteInfo', params: {} });
     
     promise
       .then(function(siteInfo) {
@@ -153,7 +152,7 @@ module.exports = Marionette.Object.extend({
     });
   },
   displayNotification: function(type, message, timeout) {
-    var options = {
+    let  options = {
       cmd: 'wrapperNotification',
       params: {
         type: type,
@@ -194,3 +193,5 @@ module.exports = Marionette.Object.extend({
     }
   }
 });
+
+export default ZeroNetUtilty;

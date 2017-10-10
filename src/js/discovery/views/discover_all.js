@@ -1,8 +1,8 @@
-var Marionette = require('backbone.marionette'),
-    tmpl       = require('../templates/all.chbs'),
-    _self;
+import Marionette from 'backbone.marionette';
+import tmpl       from '../templates/all.chbs';
+let _self;
 
-module.exports = Marionette.CollectionView.extend({
+const DiscoveryCollectionView = Marionette.CollectionView.extend({
   initialize: function (options) {
     _self = this;
   },
@@ -18,3 +18,5 @@ module.exports = Marionette.CollectionView.extend({
     this.trigger('view:player', this.model);
   }
 });
+
+export default DiscoveryCollectionView;

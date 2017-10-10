@@ -1,22 +1,25 @@
-var Marionette    = require('backbone.marionette'),
-    $             = require('jquery'),
-    _             = require('underscore'),
-    popup         = require('../../../../semantic/dist/components/popup'),
-    transition    = require('../../../../semantic/dist/components/transition'),
-    semanticForm  = require('../../../../semantic/dist/components/form'),
-    Radio         = require('backbone.radio'),
-    Model         = require('../models/user'),
-    tmpl          = require('../templates/signup.chbs'),
-    signupChannel = Radio.channel('signup'),
+import $            from 'jquery';
+import Backbone     from 'backbone';
+import Radio        from 'backbone.radio';
+import _            from 'underscore';
+import popup        from '../../../../semantic/dist/components/popup';
+import semanticForm from '../../../../semantic/dist/components/form';
+import tmpl         from '../templates/signup.chbs';
+import transition   from '../../../../semantic/dist/components/transition';
+import Marionette   from 'backbone.marionette';
+
+let signupChannel = Radio.channel('signup'),
     _self;
 
-module.exports = Marionette.View.extend({
-  initialize: function () {
+const SignupView = Marionette.View.extend({
+  initialize: function (options) {
     _self = this;
+
+    _.extend(this, options);
 
     if (!this.model) {
       console.log('no model passed in to the signup view');
-      this.model = new Model();
+      this.model = new Backbone.Model();
     }
 
     this.listenTo(signupChannel, 'success:pgp:create', this.onPgpCreateSuccess);
@@ -49,6 +52,12 @@ module.exports = Marionette.View.extend({
     showPgpGeneration: 'button.show.pgp.generation',
     submit: 'button.submit.button',
   },
+  events: {
+    'dragenter img.signup.image': 'onDragEnterAvatar',
+    'dragover img.signup.image':  'onDragOverAvatar',
+    'dragleave img.signup.image': 'onDragLeaveAvatar',
+    'drop img.signup.image':      'onDropAvatar'
+  },
   triggers: {
     'change @ui.bitmessageAddress': 'bitmessage:address:changed',
     'change @ui.emailAddress': 'email:address:changed',
@@ -58,9 +67,6 @@ module.exports = Marionette.View.extend({
     'click @ui.copyPublicBTC': 'copy:btc:public',
     'click @ui.createKey': 'pgp:create',
     'click @ui.showPgpGeneration' : 'show:pgp:generation',
-    'dragenter @ui.avatar': 'drag:enter:avatar',
-    'dragover @ui.avatar': 'drag:over:avatar',
-    'dragleave @ui.avatar': 'drag:leave:avatar',
     'input @ui.name': 'name:changing',
     'submit @ui.form': 'form:submit'
   },
@@ -70,7 +76,7 @@ module.exports = Marionette.View.extend({
     },
   },
   onPgpCreate: function () {
-    var createKeyButton  = this.getUI('createKey'),
+    let createKeyButton  = this.getUI('createKey'),
         passPhrase = this.getUI('passphrase'),
         passphraseRequiredMessage = this.getUI('passphraseRequiredMessage');
     // validate passphrase
@@ -101,28 +107,28 @@ module.exports = Marionette.View.extend({
     this.clearPassPhrase();
   },
   enableCreateKeyButton: function () {
-    var createKeyButton  = this.getUI('createKey');
+    let createKeyButton  = this.getUI('createKey');
     createKeyButton.removeClass('disabled loading');
     createKeyButton.removeAttr('disabled');
   },
   clearPassPhrase: function () {
-    var passPhrase = this.getUI('passphrase');
+    let passPhrase = this.getUI('passphrase');
 
     passPhrase.val('');
   },
   onRender: function (view) {
-    var copyPublicBTC = this.getUI('copyPublicBTC'),
+    let copyPublicBTC = this.getUI('copyPublicBTC'),
         buttons = copyPublicBTC,
         form = this.getUI('form'),
         avatar = this.getUI('avatar');
 
     if (jQuery.fn.popup) {
-      var popups =
+      let popups =
       buttons.popup({
         on: 'click',
         content: 'Copied!',
         onVisible: function () {
-          var _selector  = this;
+          let _selector  = this;
           setTimeout(function () {
             _selector.popup('hide all');
           }, 2000);
@@ -131,7 +137,7 @@ module.exports = Marionette.View.extend({
     }
 
     if (jQuery.fn.form) {
-      var forms =
+      let forms =
       form.form({
         fields: {
           name: {
@@ -146,26 +152,13 @@ module.exports = Marionette.View.extend({
         }
       });
     }
-
-    _.first(avatar).addEventListener('drop', function (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      var avatar = _self.getUI('avatar'),
-          file = _.first(event.dataTransfer.files);
-      avatar.removeClass('droppable');
-    
-      if (file && file.type && file.type.match('image.*')) {
-       signupChannel.trigger('add:avatar', file);
-      }
-      return false;
-    }, false);
   },
   onUserCreateSuccess: function () {
   },
   onUserCreateFailure: function () {
   },
   onBtcGetSuccess: function (btcAddress, qrPublic) {
-    var publicBTC = this.getUI('publicBTC'),
+    let publicBTC = this.getUI('publicBTC'),
         qrPublicBTC = this.getUI('qrPublicBTC'),
         rightRail = this.getUI('rightRail');
 
@@ -186,7 +179,7 @@ module.exports = Marionette.View.extend({
     // TODO: verify that handle isn't taken yet
   },
   onPgpPublicKeyArmoredChanged: function () {
-    var pgpPublicKeyArmored = _self.getUI('pgpPublicKeyArmored');
+    let pgpPublicKeyArmored = _self.getUI('pgpPublicKeyArmored');
 
     if (_self.model.has('pgpPublicKeyArmored') &&
         _self.model.get('pgpPublicKeyArmored') === pgpPublicKeyArmored.val()) {
@@ -196,7 +189,7 @@ module.exports = Marionette.View.extend({
     _self.model.set('pgpPublicKeyArmored', pgpPublicKeyArmored.val());
   },
   onEmailAddressChanged: function () {
-    var emailAddress = _self.getUI('emailAddress');
+    let emailAddress = _self.getUI('emailAddress');
 
     // validate email address
     if (signupChannel.request('validate:email', emailAddress.val())) {
@@ -206,7 +199,7 @@ module.exports = Marionette.View.extend({
     }
   },
   onBitmessageAddressChanged: function () {
-    var bitmessageAddress = _self.getUI('bitmessageAddress');
+    let bitmessageAddress = _self.getUI('bitmessageAddress');
     if (signupChannel.request('validate:bitmessage', bitmessageAddress.val())) {
       _self.model.set('bitmessageAddress', bitmessageAddress.val());
     } else {
@@ -217,31 +210,59 @@ module.exports = Marionette.View.extend({
     signupChannel.trigger('btc:copy:public');
   },
   onShowPgpGeneration: function () {
-    var pgpGenerationInputs = _self.getUI('pgpGenerationInputs');
+    let pgpGenerationInputs = _self.getUI('pgpGenerationInputs');
 
     pgpGenerationInputs.show();
   },
   onPassphraseChanged: function () {
-    var passphrase = _self.getUI('passphrase'),
+    let passphrase = _self.getUI('passphrase'),
         passphraseRequiredMessage = _self.getUI('passphraseRequiredMessage');
     if (passphrase.val()) {
       passphraseRequiredMessage.removeClass('error');
     }
   },
-  onDragEnterAvatar: function (event) {
+  onDragEnterAvatar: function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log('drag enterred');
     return false;
   },
-  onDragOverAvatar: function (event) {
+  onDragOverAvatar: function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log('drag over');
     _self
       .getUI('avatar')
       .addClass('droppable');
     return false;
   },
-  onDragLeaveAvatar: function (event) {
-    var avatar = _self.getUI('avatar');
+  onDragLeaveAvatar: function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    let avatar = _self.getUI('avatar');
+    console.log('drag left');
 
     _.debounce(function() {
       avatar.removeClass('droppable');
     }, 200);
+  },
+  onDropAvatar: function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    console.log('dropping');
+
+    let avatar = _self.getUI('avatar'),
+        file = _.first(event.dataTransfer.files);
+    avatar.removeClass('droppable');
+    console.log(file.name);
+    console.log(file.size);
+
+   if (file && file.type && file.type.match('image.*')) {
+     signupChannel.trigger('add:avatar', file);
+    }
+    return false;
   }
 });
+
+export default SignupView;

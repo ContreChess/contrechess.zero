@@ -1,24 +1,28 @@
-  require('./bootstrap');
+import Bootstrap from './bootstrap';
 
-  var App       = require('./app'),
-      Root      = require('./root/index'),
-      Signup    = require('./signup/signup'),
-      Discovery = require('./discovery/discovery');
+import App       from './app';
+import Index     from './index/index';
+import Signup    from './signup/signup';
+import Discovery from './discovery/discovery';
 
-  var app = new App();
 
-  app.addComponent('root', {
-    componentClass: Root,
-    isRoot: true
-  });
+const app = new App();
 
-  app.addComponent('signup', {
-    componentClass: Signup
-  });
+app.addComponent({
+  name: 'root', 
+  componentClass: Index,
+  isRoot: true
+});
 
-  app.addComponent('discovery', {
-    componentClass: Discovery
-  });
+app.addComponent({
+  name: 'signup', 
+  componentClass: Signup
+});
 
-  app.start();
+app.addComponent({
+  name: 'discovery', 
+  componentClass: Discovery
+});
+
+app.start();
 
