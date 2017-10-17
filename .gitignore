@@ -51,6 +51,5 @@ src/**/semantic.*
 src/css/themes/
 data
 deployment.js
-.development
 staging/
 

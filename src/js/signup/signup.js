@@ -100,8 +100,9 @@ const Signup = ViewComponent.extend({
       })
       .then(function(key) {
         console.log('[signup controller] pgp.createKey succeeded');
+        // instead of setting the pgp key on the model the key is placed in
+        // a file of its own
         _self.pgpKey = key;
-        _self.model.set('pgpPublicKeyArmored', key.publicKeyArmored);
         _self.downloadFile('private-key.asc', key.privateKeyArmored);
         _self.getChannel().trigger('success:pgp:create');
       }, function (error){
@@ -120,13 +121,16 @@ const Signup = ViewComponent.extend({
   },
   createUser: function (options) {
     // TODO:
-    // 1. validate that pgp public key is valid
-    if (!pgp.isValidArmoredKey(_self.model.get('pgpPublicKeyArmored'))) {
+    // 1. check the existence of a pgp key
+    if (!_self.hasOwnProperty('pgpKey')) {
       _self.getChannel().trigger('fail:user:create', 'pgp public key is not valid');
       return;
     }
     
-    let filePath = 'data/users/' + _self.model.get('btcAddress') + '/user.json';
+    let userDirectoryPath = 'data/users/' + _self.model.get('btcAddress'),
+        userFilePath      = userDirectoryPath + '/user.json',
+        pgpFilePath       = userDirectoryPath + '/pgp.asc',
+        emailFilePath     = userDirectoryPath + '/email.asc';
 
     // 2. sign user address, plus cert type, plus user address (again) in base64
     //    using site's user content address private key
@@ -139,15 +143,28 @@ const Signup = ViewComponent.extend({
     return zeronet.addCertificate(cert, _self.model.get('userName'))
       .then(function (response) {
         // 3. write the model to the file system
-        let fileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
-        return zeronet.writeFile(filePath, fileContent);
+        let userFileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
+
+        let userFileWritePromise = zeronet.writeFile(userFilePath, userFileContent),
+            pgpFileWritePromise  = zeronet.writeFile(pgpFilePath, _self.pgpKey.pgpPublicKeyArmored);
+
+        let promiseArray = [userFileWritePromise, pgpFileWritePromise];
+
+        if (_self.hasOwnProperty('emailCipherText')) {
+          promiseArray.push(zeronet.writeFile(emailFilePath, _self.emailCipherText));
+        }
+
+        return Promise.all(promiseArray);
       })
       .then(function (response) {
-        return zeronet.publish(filePath);
+        // publishing a file in the user subdirectory
+        // actually signs and publishes the 'content.json' file
+        // in the user subdirectory
+        return zeronet.publish(userFilePath);
       })
       .then(function (response) {
         console.log(response);
-        // 4. handle errors or process notifications
+        // handle errors or process notifications
       });
   },
   setEmail: function (address) {
@@ -166,7 +183,7 @@ const Signup = ViewComponent.extend({
         pgp
           .encrypt(options)
           .then(function (ciphertext) {
-            _self.model.set('emailAddress', ciphertext.data);
+            _self.emailCipherText = ciphertext.data;
           });
         
       } else {
@@ -203,11 +220,11 @@ const Signup = ViewComponent.extend({
     reader.onload = function () {
       _self.getChannel().trigger('success:avatar:load', reader.result);
 
-      let fileContent = reader.result.replace(/.*,/, ""),
+      let avatarFileContent = reader.result.replace(/.*,/, ""),
           fileExtension = file.name.substr(file.name.lastIndexOf('.')),
-          filePath = 'data/users/' + _self.model.get('btcAddress') + '/avatar' + fileExtension;
+          avatarFilePath = 'data/users/' + _self.model.get('btcAddress') + '/avatar' + fileExtension;
 
-      return zeronet.writeFile(filePath, fileContent);
+      return zeronet.writeFile(avatarFilePath, avatarFileContent);
     };
 
     reader.onabort = function () {
