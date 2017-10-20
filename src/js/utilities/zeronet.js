@@ -2,7 +2,7 @@ import Marionette   from 'backbone.marionette';
 import Backbone     from 'backbone';
 import ZeroNetError from '../_base/zeroneterror.js';
 const wrapperNonce    = document.location.href.replace(/.*wrapper_nonce=([A-Zaz0-9]+).*/, '$1');
-let nextMessageId   = 1;
+let nextMessageId   = 1,
     pendingZeroNetMessages = {},
     pendingPromiseResolvers = {},
     siteInfoModel,
@@ -32,6 +32,7 @@ const ZeroNetUtilty = Marionette.Object.extend({
 
       pendingPromiseResolvers[message.id] = {
         cmd: message.cmd,
+        message: message,
         resolve: resolve,
         reject: reject
       };
@@ -49,7 +50,7 @@ const ZeroNetUtilty = Marionette.Object.extend({
 
     switch (cmd) {
       case 'response':
-          let  pendingPromiseResolver = pendingPromiseResolvers[message.to]
+          let  pendingPromiseResolver = pendingPromiseResolvers[message.to];
           if(pendingPromiseResolver) {
             if (_self.shouldResolve(pendingPromiseResolver.cmd, message)) {
               pendingPromiseResolver.resolve(message.result || message);

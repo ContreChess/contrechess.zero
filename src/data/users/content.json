@@ -15,7 +15,7 @@
   },
   "permission_rules": {
    ".*": {
-    "files_allowed": "(avatar.png|data.json|user.json|move.json|chat.json|solicitation.json)",
+    "files_allowed": "(avatar.*|user.json|*.asc)",
     "max_size": 2000000
    }
   },

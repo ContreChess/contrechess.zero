@@ -104,7 +104,7 @@ const Signup = ViewComponent.extend({
         // a file of its own
         _self.pgpKey = key;
         _self.downloadFile('private-key.asc', key.privateKeyArmored);
-        _self.getChannel().trigger('success:pgp:create');
+        _self.getChannel().trigger('success:pgp:create', key.publicKeyArmored);
       }, function (error){
         console.log('[signup controller] pgp.createKey failed');
         _self.getChannel().trigger('fail:pgp:create');
@@ -146,7 +146,7 @@ const Signup = ViewComponent.extend({
         let userFileContent = btoa(unescape(encodeURIComponent(JSON.stringify(_self.model.toJSON(), null, '  '))));
 
         let userFileWritePromise = zeronet.writeFile(userFilePath, userFileContent),
-            pgpFileWritePromise  = zeronet.writeFile(pgpFilePath, _self.pgpKey.pgpPublicKeyArmored);
+            pgpFileWritePromise  = zeronet.writeFile(pgpFilePath, _self.pgpKey.publicKeyArmored);
 
         let promiseArray = [userFileWritePromise, pgpFileWritePromise];
 
@@ -174,10 +174,11 @@ const Signup = ViewComponent.extend({
     _clearTextEmail = address.val() || _clearTextEmail;
 
     if (_clearTextEmail) {
-      if (pgp && _self.model.has('pgpPublicKeyArmored')) {
+      if (pgp && _self.hasOwnProperty('pgpKey')) {
         let options = {
           data: _clearTextEmail,
-          publicKeys: pgp.readArmored(inigo.getPublickKey()).keys.concat(pgp.readArmored(_self.model.get('pgpPublicKeyArmored')).keys)
+          publicKeys: pgp.readArmored(inigo.getPublickKey()).keys.concat(pgp.readArmored(_self.pgpKey).keys)
+
         };
 
         pgp
@@ -187,7 +188,7 @@ const Signup = ViewComponent.extend({
           });
         
       } else {
-        _self.listenToOnce(_self.model, 'change:pgpPublicKeyArmored', _self.setEmail);
+        _self.listenToOnce(_self.getChannel(), 'success:pgp:create', _self.setEmail);
       }
     }
   },

@@ -9,9 +9,9 @@ data/users/
 | avatar        | */avatar.jpg             |                                        |
 | public key    | */pgp.asc                |                                        |
 | email         | */email.asc              |                                        |
-| offers        | */offers/users/<uuid>    | <uuid>.asc                             |
-| rejections    | */rejections/<uuid>      | empty plain text file                  |
-| games         | */games/<uuid>/<timestamp>.pgn | <timestamp>.pgn.asc              |
+| offers        | */offers/<user>/<uuid>   | <uuid>.asc                             |
+| rejections    | */rejections/<uuid>.asc  | empty plain text file                  |
+| games         | */games/<uuid>/<timestamp>.pgn.asc  |                             |
 | comments      | */games/<uuid>/comments/<timestamp>.asc |                         |
 | redeem script | */games/<uuid>/redeem.asc|                                        |
 | transaction   | */games/<uuid>/transaction.<timestamp>.asc |                      |

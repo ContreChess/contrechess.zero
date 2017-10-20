@@ -3,12 +3,14 @@
 
 const gulp            = require('gulp'),
       babelify        = require('babelify'),
+      bitcoin         = require('bitcoinjs-lib'),
       browserify      = require('browserify'),
       buffer          = require('vinyl-buffer'),
       cache           = require('gulp-cache'),
       defmod          = require('gulp-define-module'),
       deployment      = require('./deployment'),
       del             = require('del'),
+      fs              = require('fs'),
       gulpIf          = require('gulp-if'),
       handlebars      = require('gulp-handlebars'),
       imagemin        = require('gulp-imagemin'),
@@ -98,7 +100,7 @@ gulp.task('images', function () {
     .pipe(cache(imagemin({
       interlaced: true
     })))
-    .pipe(gulp.dest(distributionDir))
+    .pipe(gulp.dest(distributionDir));
 });
     
 gulp.task('html', function () {
@@ -119,4 +121,9 @@ gulp.task('deploy:dev', function () {
   return gulp.src(distributionDir)
   .pipe(gulp.dest(deploymentDir));
 });
+
+function signSiteFile(environmentSettings) {
+  let deploymentDir = `${deployment.zeronet.baseDir}/${environmentSettings.address}`,
+      siteFilePath  = `${deploymentDir}/content.json}`;
+}
 

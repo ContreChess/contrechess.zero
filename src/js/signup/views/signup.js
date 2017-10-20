@@ -70,11 +70,6 @@ const SignupView = Marionette.View.extend({
     'input @ui.name': 'name:changing',
     'submit @ui.form': 'form:submit'
   },
-  modelEvents: {
-    'change:pgpPublicKeyArmored': function (model, value) {
-      this.getUI('pgpPublicKeyArmored').val(value);
-    },
-  },
   onPgpCreate: function () {
     let createKeyButton  = this.getUI('createKey'),
         passPhrase = this.getUI('passphrase'),
@@ -95,8 +90,9 @@ const SignupView = Marionette.View.extend({
     signupChannel.trigger('user:create');
     return false;
   },
-  onPgpCreateSuccess: function () {
+  onPgpCreateSuccess: function (publicKeyArmored) {
     console.log('[signup view] pgp create succeeded');
+    this.getUI('pgpPublicKeyArmored').val(publicKeyArmored);
     this.enableCreateKeyButton();
     this.clearPassPhrase();
   },

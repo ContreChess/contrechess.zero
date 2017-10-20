@@ -22,12 +22,12 @@ const PGPUtility = Marionette.Object.extend({
       numBits: 4096,                                            // RSA key size
       passphrase: options.passphrase         // protects the private key
     },
-      promise = pgp.generateKey(pgpOptions);
+    promise = pgp.generateKey(pgpOptions);
 
-      promise
-        .then(function(key) {
-          _self.getChannel().trigger('create', key);
-        });
+    promise
+      .then(function(key) {
+        _self.getChannel().trigger('create', key);
+      });
 
     return promise;
   },
