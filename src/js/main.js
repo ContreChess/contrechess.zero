@@ -1,6 +1,7 @@
 import Bootstrap from './bootstrap';
 
 import App       from './app';
+import Root      from './root/root';
 import Index     from './index/index';
 import Signup    from './signup/signup';
 import Discovery from './discovery/discovery';
@@ -9,9 +10,14 @@ import Discovery from './discovery/discovery';
 const app = new App();
 
 app.addComponent({
-  name: 'root', 
-  componentClass: Index,
+  name: 'root',
+  componentClass: Root,
   isRoot: true
+});
+
+app.addComponent({
+  name: 'index', 
+  componentClass: Index
 });
 
 app.addComponent({

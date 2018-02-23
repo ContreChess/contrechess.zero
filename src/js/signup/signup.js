@@ -178,7 +178,6 @@ const Signup = ViewComponent.extend({
         let options = {
           data: _clearTextEmail,
           publicKeys: pgp.readArmored(inigo.getPublickKey()).keys.concat(pgp.readArmored(_self.pgpKey).keys)
-
         };
 
         pgp

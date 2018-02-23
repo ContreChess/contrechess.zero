@@ -17,13 +17,25 @@
               <input type="text" name="name" placeholder="Name" />
             </div>
           </div>
+          
+          <div class="ui left icon input">
+            <i class="mail icon">&nbsp;</i>
+            <input type="text" name="bitmessage-address" placeholder="BM-*" />
+          </div>
+          </div>
           <div class="field">
-            <label>PGP Public Key</label>
-            <textarea name="pgppublickeyarmored" rows="4"></textarea>
+            <div class="ui left icon input">
+              <i class="mail icon">&nbsp;</i>
+              <input type="text" name="email" placeholder="E-mail address" />
+            </div>
           </div>
           <div class="ui message">
             <div class="header">PGP Keys</div>
             <p>Don't have a PGP key yet? We can <button class="mini ui primary button show pgp generation">create</button> one for you.</p>
+          <div class="field">
+            <label>PGP Public Key</label>
+            <textarea name="pgppublickeyarmored" rows="4"></textarea>
+          </div>
             <div class="pgp generation inputs" style="display: none;">
               <div class="field">
                 <div class="ui left icon input">
@@ -39,20 +51,11 @@
                 <i class="spy icon">&nbsp;</i>
                 Create Key
               </button>
-            </div>
-          </div>
+              
           <div class="field">
-            <div class="ui left icon input">
-              <i class="mail icon">&nbsp;</i>
-              <input type="text" name="bitmessage-address" placeholder="BM-*" />
             </div>
           </div>
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="mail icon">&nbsp;</i>
-              <input type="text" name="email" placeholder="E-mail address" />
-            </div>
-          </div>
+          
           <button class="ui fluid large teal submit button">Sign up</button>
         </div>
         <div class="ui error message"></div>

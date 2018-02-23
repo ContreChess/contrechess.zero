@@ -39,6 +39,9 @@ export default {
     return component;
 
   },
+  getComponent(name) {
+    return this.getComponents()[name];
+  },
   getComponents() {
     const components = this.components || (this.components = {});
     return components;

@@ -10,7 +10,7 @@ let appChannel = Radio.channel('app'),
     _self;
 
 const Index = ViewComponent.extend({
-  appChannel: 'root',
+  appChannel: 'index',
   initialize: function (options) {
     _self = this;
     this.router = new Router({ controller: this });

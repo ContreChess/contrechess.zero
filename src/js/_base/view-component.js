@@ -16,6 +16,17 @@ const ViewComponent = ComponentObject.extend({
     } else {
       throw new Error('"view" is missing or is not a valid Marionette view');
     }
+  },
+  showView: function (region) {
+    if (region && (region instanceof Marionette.Region)) {
+      if (this.view && (this.view instanceof Marionette.View)) {
+        region.show(this.view);
+      } else {
+        throw new Error('"view" is missing or is not a valid Marionette view');
+      }
+    } else {
+      throw new Error('"region" is missing or is not a valid Marionette region');
+    }
   }
 });
 

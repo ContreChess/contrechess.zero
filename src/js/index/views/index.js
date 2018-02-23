@@ -5,7 +5,7 @@ import tmpl           from '../templates/index.chbs';
 let    _self;
 
 const IndexView = Marionette.View.extend({
-  initialize: function () {
+  initialize: function (options) {
     if (!this.model) {
       console.log('no model passed in to root view');
     }
